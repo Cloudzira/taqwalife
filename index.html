@@ -142,10 +142,10 @@ label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 
 <script>
 /* ========= KONFIGURASI FIREBASE: ganti nilai di bawah dengan milik Anda ========= */
-const FB={apiKey:"ISI_API_KEY",authDomain:"ISI-PROJECT.firebaseapp.com",projectId:"ISI-PROJECT",appId:"ISI_APP_ID"};
-const VAPID="ISI_VAPID_KEY"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
+const FB={apiKey:"AIzaSyCsKwj3TSQzuBGmB4Y__T8L8C1Ga9rFlZs",authDomain:"taqwalife-a50d4.firebaseapp.com",projectId:"taqwalife-a50d4",appId:"1:181591738096:web:6ec6bde49cb166c81ca435"};
+const VAPID="BAzmmmBcSR_d0BFYImv0_QDdGNCvywryi2VGGHUpMOMn1aO79QDT84LB4esS1zqz4laVDifmEwlTS5xHR4UOfK8"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
 /* ============================================================================== */
-const CFG=typeof firebase!=='undefined'&&FB.apiKey!=="ISI_API_KEY";
+const CFG = typeof firebase !== 'undefined' && FB.apiKey && FB.apiKey !== 'ISI_API_KEY';
 let auth=null,db=null,msg=null;
 if(CFG){firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();try{if(firebase.messaging.isSupported())msg=firebase.messaging()}catch(e){}}
 
