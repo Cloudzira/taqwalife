@@ -111,6 +111,12 @@ label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 .lb.me .rk,.lb:first-child .rk{background:var(--gg);color:#111}
 .code{font-family:'Cormorant Garamond',serif;font-size:38px;letter-spacing:8px;color:var(--gold);line-height:1.2}
 .box>svg{display:block;margin-bottom:6px}
+.cg{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:10px}
+.cl{aspect-ratio:1;border-radius:8px;border:1px solid var(--line);font-size:11px;font-weight:700;color:var(--mut);background:none}
+.cl.on{background:var(--gg);color:#111;border-color:transparent}
+.cl.td{border-color:var(--gold);color:var(--gold)}
+.cl.on.td{color:#111}
+.cl:disabled{opacity:.35;cursor:default}
 .pc{color:var(--gold);border-color:var(--gold);cursor:pointer;background:none}
 .hm{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .hm i{aspect-ratio:1;border-radius:6px;display:block;border:1px solid var(--line)}
@@ -136,10 +142,10 @@ label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 
 <script>
 /* ========= KONFIGURASI FIREBASE: ganti nilai di bawah dengan milik Anda ========= */
-const FB={apiKey:"AIzaSyCsKwj3TSQzuBGmB4Y__T8L8C1Ga9rFlZs",authDomain:"taqwalife-a50d4.firebaseapp.com",projectId:"taqwalife-a50d4",appId:"1:181591738096:web:6ec6bde49cb166c81ca435"};
-const VAPID="BAzmmmBcSR_d0BFYImv0_QDdGNCvywryi2VGGHUpMOMn1aO79QDT84LB4esS1zqz4laVDifmEwlTS5xHR4UOfK8"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
+const FB={apiKey:"ISI_API_KEY",authDomain:"ISI-PROJECT.firebaseapp.com",projectId:"ISI-PROJECT",appId:"ISI_APP_ID"};
+const VAPID="ISI_VAPID_KEY"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
 /* ============================================================================== */
-const CFG = typeof firebase !== 'undefined' && FB.apiKey && FB.apiKey !== 'ISI_API_KEY';
+const CFG=typeof firebase!=='undefined'&&FB.apiKey!=="ISI_API_KEY";
 let auth=null,db=null,msg=null;
 if(CFG){firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();try{if(firebase.messaging.isSupported())msg=firebase.messaging()}catch(e){}}
 
@@ -147,7 +153,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)};
-const defaults=()=>({name:'',days:{},tg:[],nt:[],rm:[],notif:0,city:'Purwokerto',tasbih:0,pt:null,loc:null,best:0,group:null,push:0,_ts:0});
+const defaults=()=>({name:'',days:{},tg:[],nt:[],rm:[],notif:0,city:'Purwokerto',tasbih:0,pt:null,loc:null,hf:[],ch:[],best:0,group:null,push:0,_ts:0});
 let D=defaults(),uid='local',pendingName='',cloudT;
 
 /* ===== PENYIMPANAN: lokal dulu, cloud dihemat agar muat 10.000+ pengguna di paket gratis ===== */
@@ -223,7 +229,7 @@ const DOA=[
  ['Keluar masjid','اَللّٰهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ','Ya Allah, sungguh aku memohon karunia-Mu.'],
  ['Doa sapu jagat','رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka.']
 ];
-const BD=[['🔥','Istiqamah 3 hari',()=>best()>=3],['🌙','7 hari beruntun',()=>best()>=7],['👑','30 hari beruntun',()=>best()>=30],['🕌','Hari sempurna',()=>Object.keys(D.days).some(k=>pct(k)===100)],['⭐','500 poin',()=>points()>=500],['💎','1.500 poin',()=>points()>=1500],['🎯','Target tuntas',()=>D.tg.some(t=>t.c>=t.g)],['✍️','5 catatan jurnal',()=>D.nt.length>=5]];
+const BD=[['🔥','Istiqamah 3 hari',()=>best()>=3],['🌙','7 hari beruntun',()=>best()>=7],['👑','30 hari beruntun',()=>best()>=30],['🕌','Hari sempurna',()=>Object.keys(D.days).some(k=>pct(k)===100)],['⭐','500 poin',()=>points()>=500],['💎','1.500 poin',()=>points()>=1500],['🎯','Target tuntas',()=>D.tg.some(t=>t.c>=t.g)],['✍️','5 catatan jurnal',()=>D.nt.length>=5],['📖','Hafalan mutqin',()=>D.hf.some(h=>h.st===2)],['🏆','Tantangan selesai',()=>D.ch.some(c=>Object.keys(c.done).length>=c.len)]];
 const best=()=>Math.max(D.best||0,streak());
 const pct=k=>{const d=D.days[k];if(!d)return 0;return Math.round(ALL.reduce((a,x)=>a+(d[x[0]]?x[2]:0),0)/TOTAL*100)};
 const day=k=>D.days[k]||(D.days[k]={});
@@ -297,6 +303,7 @@ function ring(p,s=104){const r=s/2-8,c=2*Math.PI*r;return`<svg width="${s}" heig
 const greet=()=>{const h=new Date().getHours();return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
 const hijri=d=>{try{return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d)}catch(e){return''}};
 const hDay=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric'}).format(d)}catch(e){return 0}};
+const hM=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric'}).format(d)}catch(e){return 0}};
 function puasaInfo(){
   const t=new Date(),n=new Date(t);n.setDate(n.getDate()+1);
   const f=d=>{const w=d.getDay(),h=hDay(d);return w===1?'Senin':w===4?'Kamis':(h>=13&&h<=15)?'Ayyamul Bidh (perkiraan)':''};
@@ -318,7 +325,7 @@ home(){
   <div class="sec"><div class="card"><b>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><br><small style="color:var(--mut)">${hijri(new Date())}</small>
   <div class="bar" style="margin-top:12px"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${doneN} dari ${ALL.length} amalan selesai hari ini</small><br>
   <div class="flex" style="margin-top:12px"><button class="btn sm" onclick="cur=new Date();go('ibadah')">Buka checklist hari ini</button><button class="btn sm o" onclick="shareProg()">Bagikan</button></div></div>
-  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}
+  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}${ramInfo()}${hafDue()}
   <div class="card"><h3>Jadwal Sholat · ${esc(D.city)}</h3>${nxi()}${D.pt?`<div class="pt">${D.pt.t.map(x=>`<div class="${x[0]===np?'nx':''}">${x[0]}<b>${x[1]}</b></div>`).join('')}</div>`:'<small style="color:var(--mut)">Memuat jadwal sholat… (butuh internet)</small>'}</div>
   <div class="card quote"><p>“${q[0]}”</p><small>${q[1]}</small></div>
   <div class="card"><h3>Level: ${L.n}</h3><div class="bar"><i style="width:${Math.min(100,(L.p%600)/6)}%"></i></div><small style="color:var(--mut)">${L.i<LV.length-1?(L.next-L.p)+' poin lagi menuju level berikutnya':'Level tertinggi. Teruslah istiqamah!'}</small></div></div>`},
@@ -333,8 +340,8 @@ jurnal(){
   return`<div class="sec"><div class="card"><h3>Muhasabah hari ini</h3><textarea id="nt" rows="4" placeholder="Apa yang sudah baik hari ini? Apa yang ingin diperbaiki besok? Apa yang disyukuri?"></textarea><button class="btn sm" style="margin-top:10px" onclick="addN()">Simpan catatan</button></div>
   ${D.nt.length?D.nt.map((n,i)=>`<div class="note"><small>${n.d}</small><p>${esc(n.x).replace(/\n/g,'<br>')}</p><button class="del" onclick="delN(${i})">Hapus</button></div>`).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Catatan Anda akan muncul di sini.</div>'}</div>`},
 more(){
-  const S={eval:evalV,fam:famV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,acc:accV};
-  return`<div class="pills">${[['eval','Evaluasi'],['fam','Keluarga'],['doa','Doa'],['qib','Kiblat'],['zak','Zakat'],['tas','Tasbih'],['rem','Pengingat'],['acc','Akun']].map(p=>`<button class="${sub===p[0]?'on':''}" onclick="sub='${p[0]}';render()">${p[1]}</button>`).join('')}</div><div class="sec">${S[sub]()}</div>`}
+  const S={eval:evalV,fam:famV,haf:hafV,cha:chaV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,acc:accV};
+  return`<div class="pills">${[['eval','Evaluasi'],['fam','Keluarga'],['haf','Hafalan'],['cha','Tantangan'],['doa','Doa'],['qib','Kiblat'],['zak','Zakat'],['tas','Tasbih'],['rem','Pengingat'],['acc','Akun']].map(p=>`<button class="${sub===p[0]?'on':''}" onclick="sub='${p[0]}';render()">${p[1]}</button>`).join('')}</div><div class="sec">${S[sub]()}</div>`}
 };
 function evalV(){
   D.best=best();
@@ -511,6 +518,37 @@ function gAdj(id,n){
   gTm=setTimeout(()=>{const u={};for(const k in gPend)if(gPend[k])u['targets.'+k+'.c']=FV().increment(gPend[k]);gPend={};if(Object.keys(u).length)gref().update(u).catch(()=>{})},1500);
 }
 function gDelT(id){if(!confirm('Hapus target bersama ini?'))return;if(gDoc&&gDoc.targets)delete gDoc.targets[id];render();gref().update({['targets.'+id]:FV().delete()}).catch(()=>{})}
+/* ===== HAFALAN ===== */
+const SUR="Al-Fatihah,Al-Baqarah,Ali 'Imran,An-Nisa',Al-Ma'idah,Al-An'am,Al-A'raf,Al-Anfal,At-Taubah,Yunus,Hud,Yusuf,Ar-Ra'd,Ibrahim,Al-Hijr,An-Nahl,Al-Isra',Al-Kahf,Maryam,Ta Ha,Al-Anbiya',Al-Hajj,Al-Mu'minun,An-Nur,Al-Furqan,Asy-Syu'ara',An-Naml,Al-Qashash,Al-'Ankabut,Ar-Rum,Luqman,As-Sajdah,Al-Ahzab,Saba',Fathir,Ya Sin,Ash-Shaffat,Shad,Az-Zumar,Ghafir,Fushshilat,Asy-Syura,Az-Zukhruf,Ad-Dukhan,Al-Jatsiyah,Al-Ahqaf,Muhammad,Al-Fath,Al-Hujurat,Qaf,Adz-Dzariyat,Ath-Thur,An-Najm,Al-Qamar,Ar-Rahman,Al-Waqi'ah,Al-Hadid,Al-Mujadilah,Al-Hasyr,Al-Mumtahanah,Ash-Shaff,Al-Jumu'ah,Al-Munafiqun,At-Taghabun,Ath-Thalaq,At-Tahrim,Al-Mulk,Al-Qalam,Al-Haqqah,Al-Ma'arij,Nuh,Al-Jinn,Al-Muzzammil,Al-Muddatstsir,Al-Qiyamah,Al-Insan,Al-Mursalat,An-Naba',An-Nazi'at,'Abasa,At-Takwir,Al-Infithar,Al-Muthaffifin,Al-Insyiqaq,Al-Buruj,Ath-Thariq,Al-A'la,Al-Ghasyiyah,Al-Fajr,Al-Balad,Asy-Syams,Al-Lail,Adh-Dhuha,Asy-Syarh,At-Tin,Al-'Alaq,Al-Qadr,Al-Bayyinah,Az-Zalzalah,Al-'Adiyat,Al-Qari'ah,At-Takatsur,Al-'Ashr,Al-Humazah,Al-Fil,Quraisy,Al-Ma'un,Al-Kautsar,Al-Kafirun,An-Nashr,Al-Lahab,Al-Ikhlash,Al-Falaq,An-Nas".split(',');
+const dueOf=h=>{const b=h.r||h.d,ago=Math.floor((new Date(key(new Date()))-new Date(b))/864e5);return{ago,due:ago>=(h.st===0?3:7)}};
+function hafDue(){const n=D.hf.filter(h=>dueOf(h).due).length;return n?`<div class="card flex sp"><b>📖 ${n} hafalan perlu murajaah</b><button class="btn sm" onclick="sub='haf';go('more')">Buka</button></div>`:''}
+function hafV(){
+  const T=['Baru','Murajaah','Mutqin'],cnt=[0,1,2].map(i=>D.hf.filter(h=>h.st===i).length);
+  return`<div class="card"><h3>Catat hafalan</h3><input id="hs" list="sl" placeholder="Nama surah, misal: Al-Mulk"><datalist id="sl">${SUR.map(x=>`<option value="${x}">`).join('')}</datalist><input id="ha" placeholder="Ayat, misal 1-30" style="margin-top:8px"><button class="btn sm" style="margin-top:10px" onclick="addH()">Simpan hafalan</button></div>
+  <div class="card"><h3>Ringkasan</h3><div class="flex" style="flex-wrap:wrap"><span class="chip pc">Baru ${cnt[0]}</span><span class="chip pc">Murajaah ${cnt[1]}</span><span class="chip pc">Mutqin ${cnt[2]}</span></div><small style="color:var(--mut);display:block;margin-top:8px">Ketuk status untuk menaikkan: Baru, Murajaah, lalu Mutqin (lancar). Murajaah diingatkan tiap 3 hari untuk hafalan baru dan 7 hari untuk yang sudah lancar.</small></div>
+  ${D.hf.length?D.hf.map((h,i)=>{const x=dueOf(h);return`<div class="card"><div class="flex sp"><b>${esc(h.s)} · ${esc(h.a)}</b><button class="del" onclick="delH(${i})">Hapus</button></div><small style="color:var(--mut)">Murajaah terakhir: ${h.r?(x.ago===0?'hari ini':x.ago+' hari lalu'):'belum pernah'}</small>${x.due?'<small style="color:var(--gold);font-weight:700;display:block">Saatnya murajaah</small>':''}<div class="flex" style="margin-top:8px"><button class="btn sm ${h.st===2?'':'o'}" onclick="stH(${i})">${T[h.st]}</button><button class="btn sm o" onclick="rvH(${i})">Murajaah hari ini</button></div></div>`}).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Belum ada hafalan tercatat.</div>'}`}
+function addH(){const s=$('#hs').value.trim(),a=$('#ha').value.trim();if(!s)return toast('Isi nama surah');if(D.hf.length>=300)return toast('Maksimal 300 catatan hafalan');D.hf.unshift({s,a:a||'-',st:0,r:null,d:key(new Date())});save();render();toast('Hafalan dicatat')}
+function stH(i){D.hf[i].st=(D.hf[i].st+1)%3;save();render()}
+function rvH(i){D.hf[i].r=key(new Date());save();render();toast('Barakallahu fiik, murajaah tercatat')}
+function delH(i){if(confirm('Hapus catatan hafalan ini?')){D.hf.splice(i,1);save();render()}}
+/* ===== TANTANGAN & RAMADHAN ===== */
+const CPRE=[['Ramadhan: 1 juz per hari',30],['Tahajud 30 hari',30],['Dhuha 21 hari',21],['Sedekah tiap hari',30],['Sholat berjamaah 7 hari',7],['Dzikir pagi petang 40 hari',40]];
+const addMin=(t,n)=>{const[h,m]=t.split(':'),x=((+h*60+ +m+n)%1440+1440)%1440;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')};
+function ramInfo(){
+  if(hM(new Date())!==9||!D.pt)return'';
+  const has=D.ch.some(c=>c.n.startsWith('Ramadhan'));
+  return`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 Ramadhan hari ke-${hDay(new Date())} (perkiraan)</b><br><small style="color:var(--mut)">Imsak ${addMin(D.pt.t[0][1],-10)} · Berbuka ${D.pt.t[3][1]}</small>${has?'':'<br><button class="btn sm" style="margin-top:10px" onclick="startRam()">Mulai tantangan Ramadhan</button>'}</div>`}
+function startRam(){D.ch.unshift({n:CPRE[0][0],len:30,s:key(new Date()),done:{}});save();sub='cha';go('more')}
+const cDate=(c,i)=>{const[y,m,d]=c.s.split('-');return new Date(+y,+m-1,+d+i)};
+function chaV(){
+  const tk=key(new Date());
+  return`<div class="card"><h3>Mulai tantangan baru</h3><div class="flex" style="flex-wrap:wrap;margin-bottom:10px">${CPRE.map((p,i)=>`<button class="chip pc" onclick="preC(${i})">${p[0]}</button>`).join('')}</div><input id="cn" placeholder="Nama tantangan"><select id="cl" style="margin-top:8px">${[7,14,21,30,40].map(n=>`<option value="${n}" ${n===30?'selected':''}>${n} hari</option>`).join('')}</select><button class="btn sm" style="margin-top:10px" onclick="addC()">Mulai hari ini</button></div>
+  ${D.ch.length?D.ch.map((c,ci)=>{const n=Object.keys(c.done).length,p=Math.min(100,Math.round(n/c.len*100));return`<div class="card"><div class="flex sp"><b>${esc(c.n)}</b><button class="del" onclick="delC(${ci})">Hapus</button></div><div class="bar"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${n} dari ${c.len} hari · ${p}%</small>
+  <div class="cg" style="grid-template-columns:repeat(${c.len<=21?7:10},1fr)">${[...Array(c.len)].map((_,i)=>{const k=key(cDate(c,i));return`<button class="cl ${c.done[k]?'on':''} ${k===tk?'td':''}" ${k>tk?'disabled':''} onclick="tgC(${ci},'${k}')">${i+1}</button>`}).join('')}</div>${n>=c.len?'<small style="color:var(--gold);font-weight:700;display:block;margin-top:8px">Alhamdulillah, tantangan selesai! 🏆</small>':''}</div>`}).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Belum ada tantangan. Pilih salah satu di atas untuk mulai.</div>'}`}
+function preC(i){$('#cn').value=CPRE[i][0];$('#cl').value=CPRE[i][1]}
+function addC(){const n=$('#cn').value.trim();if(!n)return toast('Isi nama tantangan');if(D.ch.length>=20)return toast('Maksimal 20 tantangan');D.ch.unshift({n,len:+$('#cl').value,s:key(new Date()),done:{}});save();render();toast('Tantangan dimulai. Semangat!')}
+function tgC(ci,k){const c=D.ch[ci];if(c.done[k])delete c.done[k];else c.done[k]=1;save();render();if(Object.keys(c.done).length===c.len)toast('MasyaAllah, tantangan selesai! 🏆')}
+function delC(i){if(confirm('Hapus tantangan ini?')){D.ch.splice(i,1);save();render()}}
 /* ===== PUSH & PASANG APLIKASI ===== */
 async function togglePush(){
   if(D.push){D.push=0;save();if(db&&uid!=='local')db.collection('users').doc(uid).set({token:null},{merge:true}).catch(()=>{});return render()}
