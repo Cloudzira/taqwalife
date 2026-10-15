@@ -119,6 +119,26 @@ label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 .cl.td{border-color:var(--gold);color:var(--gold)}
 .cl.on.td{color:#111}
 .cl:disabled{opacity:.35;cursor:default}
+.tm{color:var(--gold);font-weight:800;font-size:12px;margin-right:8px;font-family:Sora,sans-serif}
+.st{font-size:28px;line-height:1;color:var(--line);background:none}
+.st.on{color:var(--gold)}
+.ft{text-align:center;font-size:11px;color:var(--mut);padding:10px 0 4px}
+.ft span,.ft b{color:var(--gold)}
+.ft b{font-weight:600}
+.soc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc a{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);font-weight:600;font-size:13px;transition:.2s}
+.soc a:hover{border-color:var(--gold);color:var(--gold)}
+.soc i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold);font-size:15px;flex:none}
+details{border-bottom:1px solid var(--line);padding:11px 0}
+details:last-child{border:0;padding-bottom:0}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';color:var(--gold);font-weight:800}
+details[open] summary::after{content:'−'}
+details p,details li{color:var(--mut);font-size:13px;margin-top:6px}
+details ol,details ul{padding-left:18px;margin-top:4px}
+details b{color:var(--ink)}
+.icb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:auto}
 .pc{color:var(--gold);border-color:var(--gold);cursor:pointer;background:none}
 .hm{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .hm i{aspect-ratio:1;border-radius:6px;display:block;border:1px solid var(--line)}
@@ -136,18 +156,19 @@ label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 <div id="auth"><div class="box" id="authBox"></div></div>
 
 <div id="app">
-  <header class="top"><span class="flex"><svg class="lg"><use href="#fl"/></svg><b id="hd">TaqwaLife</b></span><button class="icb" onclick="toggleDark()" aria-label="Ganti tema" id="dk">☾</button></header>
+  <header class="top"><span class="flex"><svg class="lg"><use href="#fl"/></svg><b id="hd">TaqwaLife</b></span><span class="flex"><button class="icb" onclick="openAbout()" aria-label="Tentang dan informasi aplikasi" title="Tentang" id="ab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button><button class="icb" onclick="toggleDark()" aria-label="Ganti tema" id="dk">☾</button></span></header>
   <main id="view"></main>
+  <footer class="ft">Crafted with <span>♥</span> by <b>Kurniapedia</b> 2026</footer>
   <nav><div id="nav"></div></nav>
 </div>
 <div id="toast"></div>
 
 <script>
 /* ========= KONFIGURASI FIREBASE: ganti nilai di bawah dengan milik Anda ========= */
-const FB={apiKey:"AIzaSyCsKwj3TSQzuBGmB4Y__T8L8C1Ga9rFlZs",authDomain:"taqwalife-a50d4.firebaseapp.com",projectId:"taqwalife-a50d4",appId:"1:181591738096:web:6ec6bde49cb166c81ca435"};
-const VAPID="BAzmmmBcSR_d0BFYImv0_QDdGNCvywryi2VGGHUpMOMn1aO79QDT84LB4esS1zqz4laVDifmEwlTS5xHR4UOfK8"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
+const FB={apiKey:"ISI_API_KEY",authDomain:"ISI-PROJECT.firebaseapp.com",projectId:"ISI-PROJECT",appId:"ISI_APP_ID"};
+const VAPID="ISI_VAPID_KEY"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
 /* ============================================================================== */
-const CFG = typeof firebase !== 'undefined' && FB.apiKey && FB.apiKey !== 'ISI_API_KEY';
+const CFG=typeof firebase!=='undefined'&&FB.apiKey!=="ISI_API_KEY";
 let auth=null,db=null,msg=null;
 if(CFG){firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();try{if(firebase.messaging.isSupported())msg=firebase.messaging()}catch(e){}}
 
@@ -155,7 +176,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)};
-const defaults=()=>({name:'',days:{},tg:[],nt:[],rm:[],notif:0,city:'Purwokerto',tasbih:0,pt:null,loc:null,hf:[],ch:[],best:0,group:null,push:0,_ts:0});
+const defaults=()=>({name:'',days:{},tg:[],nt:[],rm:[],notif:0,city:'Purwokerto',tasbih:0,pt:null,loc:null,hf:[],ch:[],ag:{},agt:null,agr:{},best:0,group:null,push:0,_ts:0});
 let D=defaults(),uid='local',pendingName='',cloudT;
 
 /* ===== PENYIMPANAN: lokal dulu, cloud dihemat agar muat 10.000+ pengguna di paket gratis ===== */
@@ -163,9 +184,9 @@ const SYNC_MS=6*36e5,READ_MS=12*36e5;
 let dirty=0;
 const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-function prune(){const lim=new Date();lim.setDate(lim.getDate()-400);const lk=key(lim);for(const k in D.days)if(k<lk)delete D.days[k];if(D.nt.length>300)D.nt.length=300}
-function pack(){const o=Object.assign({},D),days={};for(const k in D.days){const v=D.days[k],m=ALL.reduce((a,x,i)=>a|(v[x[0]]?1<<i:0),0);if(m)days[k]=m}o.days=days;o.pk=1;delete o.pt;return JSON.stringify(o)}
-function unpack(j){const o=JSON.parse(j);if(o.pk){const days={};for(const k in o.days){const m=o.days[k],v={};ALL.forEach((x,i)=>{if(m&(1<<i))v[x[0]]=1});days[k]=v}o.days=days}delete o.pk;return o}
+function prune(){const lim=new Date();lim.setDate(lim.getDate()-400);const lk=key(lim);for(const k in D.days)if(k<lk)delete D.days[k];if(D.nt.length>300)D.nt.length=300;const la=new Date();la.setDate(la.getDate()-120);const ak=key(la);for(const k in D.ag)if(k<ak||!D.ag[k].length)delete D.ag[k];for(const k in D.agr)if(k<ak)delete D.agr[k]}
+function pack(){const o=Object.assign({},D),days={};for(const k in D.days){const v=D.days[k],m=ALL.reduce((a,x,i)=>a|(v[x[0]]?1<<i:0),0);if(m)days[k]=m}o.days=days;o.pk=1;delete o.pt;const l30=key(new Date(Date.now()-30*864e5)),ag={},agr={};for(const k in D.ag)if(k>=l30&&D.ag[k].length)ag[k]=D.ag[k].map(a=>[a.t,a.n,a.c,a.d]);for(const k in D.agr)if(k>=l30)agr[k]=D.agr[k];o.ag=ag;o.agr=agr;return JSON.stringify(o)}
+function unpack(j){const o=JSON.parse(j);if(o.pk){const days={};for(const k in o.days){const m=o.days[k],v={};ALL.forEach((x,i)=>{if(m&(1<<i))v[x[0]]=1});days[k]=v}o.days=days}if(o.ag)for(const k in o.ag)o.ag[k]=o.ag[k].map((a,i)=>Array.isArray(a)?{id:'a'+k.replace(/-/g,'')+i,t:a[0],n:a[1],c:a[2],d:a[3]}:a);delete o.pk;return o}
 function save(){D._ts=Date.now();prune();lss('taqwalife_v1_'+uid,JSON.stringify(D));if(db&&uid!=='local')dirty=1}
 async function syncCloud(force){
   if(!dirty||!db||uid==='local'||!navigator.onLine)return;
@@ -231,7 +252,7 @@ const DOA=[
  ['Keluar masjid','اَللّٰهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ','Ya Allah, sungguh aku memohon karunia-Mu.'],
  ['Doa sapu jagat','رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka.']
 ];
-const BD=[['🔥','Istiqamah 3 hari',()=>best()>=3],['🌙','7 hari beruntun',()=>best()>=7],['👑','30 hari beruntun',()=>best()>=30],['🕌','Hari sempurna',()=>Object.keys(D.days).some(k=>pct(k)===100)],['⭐','500 poin',()=>points()>=500],['💎','1.500 poin',()=>points()>=1500],['🎯','Target tuntas',()=>D.tg.some(t=>t.c>=t.g)],['✍️','5 catatan jurnal',()=>D.nt.length>=5],['📖','Hafalan mutqin',()=>D.hf.some(h=>h.st===2)],['🏆','Tantangan selesai',()=>D.ch.some(c=>Object.keys(c.done).length>=c.len)]];
+const BD=[['🔥','Istiqamah 3 hari',()=>best()>=3],['🌙','7 hari beruntun',()=>best()>=7],['👑','30 hari beruntun',()=>best()>=30],['🕌','Hari sempurna',()=>Object.keys(D.days).some(k=>pct(k)===100)],['⭐','500 poin',()=>points()>=500],['💎','1.500 poin',()=>points()>=1500],['🎯','Target tuntas',()=>D.tg.some(t=>t.c>=t.g)],['✍️','5 catatan jurnal',()=>D.nt.length>=5],['📖','Hafalan mutqin',()=>D.hf.some(h=>h.st===2)],['🗓️','Agenda tuntas 100%',()=>Object.keys(D.ag).some(k=>agPct(k)===100)],['🏆','Tantangan selesai',()=>D.ch.some(c=>Object.keys(c.done).length>=c.len)]];
 const best=()=>Math.max(D.best||0,streak());
 const pct=k=>{const d=D.days[k];if(!d)return 0;return Math.round(ALL.reduce((a,x)=>a+(d[x[0]]?x[2]:0),0)/TOTAL*100)};
 const day=k=>D.days[k]||(D.days[k]={});
@@ -292,12 +313,13 @@ async function enterApp(u){
 }
 
 /* ===== NAVIGASI ===== */
-const ICO={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',ibadah:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',jurnal:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM9 9h6M9 13h6"/>',more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'};
-const TABS=[['home','Beranda'],['ibadah','Ibadah'],['target','Target'],['jurnal','Jurnal'],['more','Lainnya']];
+const ICO={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',ibadah:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',jurnal:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM9 9h6M9 13h6"/>',agenda:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M8 15h3"/>',more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'};
+const TABS=[['home','Beranda'],['ibadah','Ibadah'],['agenda','Agenda'],['target','Target'],['jurnal','Jurnal'],['more','Lainnya']];
 let tab='home',cur=new Date(),sub='eval',QB=null,cmp=false;
 function nav(){$('#nav').innerHTML=TABS.map(t=>`<button onclick="go('${t[0]}')" class="${tab===t[0]?'on':''}"><svg viewBox="0 0 24 24">${ICO[t[0]]}</svg>${t[1]}</button>`).join('')}
 function go(t){tab=t;nav();render();scrollTo(0,0)}
-function render(){$('#view').innerHTML=V[tab]();$('#hd').innerHTML=tab==='home'?'Taqwa<span class="lt">Life</span>':({ibadah:'Checklist Ibadah',target:'Target Ibadah',jurnal:'Jurnal Muhasabah',more:'Lainnya'})[tab]}
+function render(){$('#view').innerHTML=V[tab]();$('#hd').innerHTML=tab==='home'?'Taqwa<span class="lt">Life</span>':({ibadah:'Checklist Ibadah',agenda:'Agenda Harian',target:'Target Ibadah',jurnal:'Jurnal Muhasabah',more:'Lainnya'})[tab]}
+function openAbout(){sub='abt';go('more')}
 function toggleDark(){const d=document.body.classList.toggle('dark');localStorage.setItem('ml_theme',d?'d':'l');$('#dk').textContent=d?'☀':'☾'}
 
 /* ===== TAMPILAN ===== */
@@ -327,7 +349,7 @@ home(){
   <div class="sec"><div class="card"><b>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><br><small style="color:var(--mut)">${hijri(new Date())}</small>
   <div class="bar" style="margin-top:12px"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${doneN} dari ${ALL.length} amalan selesai hari ini</small><br>
   <div class="flex" style="margin-top:12px"><button class="btn sm" onclick="cur=new Date();go('ibadah')">Buka checklist hari ini</button><button class="btn sm o" onclick="shareProg()">Bagikan</button></div></div>
-  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}${ramInfo()}${hafDue()}
+  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}${agHome()}${ramInfo()}${hafDue()}
   <div class="card"><h3>Jadwal Sholat · ${esc(D.city)}</h3>${nxi()}${D.pt?`<div class="pt">${D.pt.t.map(x=>`<div class="${x[0]===np?'nx':''}">${x[0]}<b>${x[1]}</b></div>`).join('')}</div>`:'<small style="color:var(--mut)">Memuat jadwal sholat… (butuh internet)</small>'}</div>
   <div class="card quote"><p>“${q[0]}”</p><small>${q[1]}</small></div>
   <div class="card"><h3>Level: ${L.n}</h3><div class="bar"><i style="width:${Math.min(100,(L.p%600)/6)}%"></i></div><small style="color:var(--mut)">${L.i<LV.length-1?(L.next-L.p)+' poin lagi menuju level berikutnya':'Level tertinggi. Teruslah istiqamah!'}</small></div></div>`},
@@ -342,11 +364,12 @@ jurnal(){
   return`<div class="sec"><div class="card"><h3>Muhasabah hari ini</h3><textarea id="nt" rows="4" placeholder="Apa yang sudah baik hari ini? Apa yang ingin diperbaiki besok? Apa yang disyukuri?"></textarea><button class="btn sm" style="margin-top:10px" onclick="addN()">Simpan catatan</button></div>
   ${D.nt.length?D.nt.map((n,i)=>`<div class="note"><small>${n.d}</small><p>${esc(n.x).replace(/\n/g,'<br>')}</p><button class="del" onclick="delN(${i})">Hapus</button></div>`).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Catatan Anda akan muncul di sini.</div>'}</div>`},
 more(){
-  const S={eval:evalV,fam:famV,haf:hafV,cha:chaV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,acc:accV};
-  return`<div class="pills">${[['eval','Evaluasi'],['fam','Keluarga'],['haf','Hafalan'],['cha','Tantangan'],['doa','Doa'],['qib','Kiblat'],['zak','Zakat'],['tas','Tasbih'],['rem','Pengingat'],['acc','Akun']].map(p=>`<button class="${sub===p[0]?'on':''}" onclick="sub='${p[0]}';render()">${p[1]}</button>`).join('')}</div><div class="sec">${S[sub]()}</div>`}
+  const S={eval:evalV,fam:famV,haf:hafV,cha:chaV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,acc:accV,abt:abtV};
+  return`<div class="pills">${[['eval','Evaluasi'],['fam','Keluarga'],['haf','Hafalan'],['cha','Tantangan'],['doa','Doa'],['qib','Kiblat'],['zak','Zakat'],['tas','Tasbih'],['rem','Pengingat'],['acc','Akun'],['abt','Tentang']].map(p=>`<button class="${sub===p[0]?'on':''}" onclick="sub='${p[0]}';render()">${p[1]}</button>`).join('')}</div><div class="sec">${S[sub]()}</div>`}
 };
 function evalV(){
   D.best=best();
+  const a7=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return[d,agPct(key(d))]}),av=a7.filter(x=>x[1]!==null),ava=av.length?Math.round(av.reduce((a,x)=>a+x[1],0)/av.length):null;
   const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return[d,pct(key(d))]});
   const avg=Math.round(days.reduce((a,x)=>a+x[1],0)/7);
   const cnt=ALL.map(x=>[x[1],[...Array(30)].reduce((a,_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return a+(((D.days[key(d)]||{})[x[0]])?1:0)},0)]).sort((a,b)=>b[1]-a[1]);
@@ -354,6 +377,7 @@ function evalV(){
   return`<div class="card"><h3>Capaian 7 hari terakhir</h3><div class="bars">${days.map(x=>`<div><i style="height:${x[1]}%"></i>${x[0].toLocaleDateString('id-ID',{weekday:'short'})}</div>`).join('')}</div></div>
   <div class="card"><h3>Rata-rata ${avg}%</h3><p style="color:var(--mut)">${msg}</p></div>
   <div class="card"><h3>Evaluasi 30 hari</h3><p>✅ Paling konsisten: <b>${cnt[0][1]?cnt[0][0]:'-'}</b></p><p>⚠️ Perlu ditingkatkan: <b>${cnt[cnt.length-1][0]}</b> (${cnt[cnt.length-1][1]}x)</p></div>
+  <div class="card"><h3>Ketercapaian agenda 7 hari</h3><div class="bars">${a7.map(x=>`<div><i style="height:${x[1]||0}%"></i>${x[0].toLocaleDateString('id-ID',{weekday:'short'})}</div>`).join('')}</div><p style="color:var(--mut);font-size:13px;margin-top:6px">${ava===null?'Belum ada agenda. Susun agenda harian di tab Agenda.':'Rata-rata '+ava+'% ('+grade(ava)+') dari '+av.length+' hari beragenda.'}</p></div>
   <div class="card"><h3>Peta konsistensi 5 minggu</h3><div class="hm">${[...Array(35)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-34+i);const p=pct(key(d));return`<i title="${key(d)}: ${p}%" style="background:${p?`rgba(212,175,55,${.15+p/100*.85})`:'var(--bg)'}"></i>`}).join('')}</div></div>
   <div class="card"><h3>Pencapaian</h3><div class="bdg">${BD.map(b=>`<div class="${b[2]()?'on':''}"><span>${b[0]}</span>${b[1]}</div>`).join('')}</div></div>`}
 function doaV(){return DOA.map(d=>`<div class="card doa"><h3>${d[0]}</h3><p class="ar">${d[1]}</p><p style="color:var(--mut);font-size:13px">${d[2]}</p></div>`).join('')}
@@ -395,6 +419,7 @@ function accV(){
   <div class="card"><h3>Sinkronisasi</h3><small style="color:var(--mut)">${syncInfo()}</small><br><button class="btn sm" style="margin-top:10px" onclick="syncNow()">Sinkron sekarang</button></div>
   <div class="card"><h3>Cadangan data</h3><div class="flex"><button class="btn sm" onclick="exp()">Unduh cadangan</button><button class="btn sm o" onclick="$('#imp').click()">Pulihkan</button></div><input type="file" id="imp" accept=".json" hidden onchange="imp(this)"></div>
   ${matchMedia('(display-mode: standalone)').matches?'':`<div class="card"><h3>Pasang aplikasi</h3>${inst?'<button class="btn sm" onclick="pasang()">Pasang di perangkat</button>':'<small style="color:var(--mut)">Buka menu browser lalu pilih Tambahkan ke layar utama (iPhone: Bagikan, lalu Tambah ke Layar Utama).</small>'}</div>`}
+  <button class="btn o" onclick="sub='abt';render()">Tentang dan panduan penggunaan</button>
   <button class="btn" onclick="logout()">Keluar</button>`}
 
 /* ===== AKSI ===== */
@@ -419,7 +444,7 @@ function notify(m){const o={body:m,icon:'icon-192.png',badge:'icon-192.png'};if(
 function tick(){
   if(!D.notif||$('#app').style.display!=='block')return;
   const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'),k=key(n)+hm;
-  const L=D.rm.filter(r=>r.t===hm).map(r=>r.l);
+  const L=D.rm.filter(r=>r.t===hm).map(r=>r.l).concat(((D.ag||{})[key(n)]||[]).filter(a=>a.t===hm&&!a.d).map(a=>'Agenda: '+a.n));
   if(D.pt)D.pt.t.forEach(x=>{if(x[1]===hm)L.push('Waktu sholat '+x[0]+' telah tiba')});
   if(L.length&&!fired[k]){fired[k]=1;L.forEach(notify)}
 }
@@ -551,6 +576,118 @@ function preC(i){$('#cn').value=CPRE[i][0];$('#cl').value=CPRE[i][1]}
 function addC(){const n=$('#cn').value.trim();if(!n)return toast('Isi nama tantangan');if(D.ch.length>=20)return toast('Maksimal 20 tantangan');D.ch.unshift({n,len:+$('#cl').value,s:key(new Date()),done:{}});save();render();toast('Tantangan dimulai. Semangat!')}
 function tgC(ci,k){const c=D.ch[ci];if(c.done[k])delete c.done[k];else c.done[k]=1;save();render();if(Object.keys(c.done).length===c.len)toast('MasyaAllah, tantangan selesai! 🏆')}
 function delC(i){if(confirm('Hapus tantangan ini?')){D.ch.splice(i,1);save();render()}}
+/* ===== AGENDA HARIAN: rencana ibadah & aktivitas dari bangun tidur sampai tidur lagi ===== */
+let agD=new Date(),agE=null;
+const agK=()=>key(agD);
+const agArr=()=>(D.ag[agK()]=D.ag[agK()]||[]);
+const agList=()=>(D.ag[agK()]||[]).slice().sort((a,b)=>a.t.localeCompare(b.t));
+const grade=p=>p>=90?'Sangat Baik (A)':p>=75?'Baik (B)':p>=60?'Cukup (C)':p>0?'Perlu ditingkatkan (D)':'Belum ada yang tercentang';
+const nowHM=()=>{const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')};
+function agPct(k){const L=D.ag[k]||[];return L.length?Math.round(L.filter(a=>a.d).length/L.length*100):null}
+function tplB(){
+  const[sb,dz,as,mg,is]=D.pt?D.pt.t.map(x=>x[1]):['04:30','12:00','15:15','18:00','19:15'];
+  return[[addMin(sb,-60),'Bangun tidur, berdoa & tahajud','i'],[sb,'Sholat Subuh berjamaah','i'],[addMin(sb,25),'Dzikir pagi & tilawah Al-Qur\'an','i'],['06:30','Sarapan & persiapan aktivitas','a'],['07:30','Aktivitas utama (kerja / sekolah)','a'],['09:00','Sholat Dhuha','i'],[dz,'Sholat Dzuhur','i'],[addMin(dz,30),'Makan siang & istirahat','a'],[as,'Sholat Ashar','i'],[addMin(as,30),'Dzikir petang','i'],[mg,'Sholat Maghrib & ba\'diyah','i'],[addMin(mg,25),'Tilawah / murajaah hafalan','i'],[is,'Sholat Isya','i'],[addMin(is,40),'Keluarga, belajar & muhasabah','a'],[addMin(is,100),'Witir, doa & adab tidur','i'],['22:00','Tidur','a']];
+}
+V.agenda=function(){
+  const k=agK(),tk=key(new Date()),isT=k===tk,L=agList(),hm=nowHM();
+  const dn=x=>x.filter(a=>a.d).length,ib=L.filter(a=>a.c==='i'),ac=L.filter(a=>a.c!=='i'),p=L.length?Math.round(dn(L)/L.length*100):0,r=(D.agr||{})[k]||{};
+  const dates=Object.keys(D.ag).filter(x=>x!==k&&D.ag[x].length).sort().reverse().slice(0,14);
+  const lab=isT?'Hari ini':k===key(new Date(Date.now()+864e5))?'Besok':agD.toLocaleDateString('id-ID',{weekday:'long'});
+  return`<div class="sec"><div class="card flex sp"><button class="icb" onclick="agShift(-1)" aria-label="Hari sebelumnya">‹</button><div style="text-align:center"><b>${lab}</b><br><small style="color:var(--mut)">${agD.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})} · ${hijri(agD)}</small></div><button class="icb" onclick="agShift(1)" aria-label="Hari berikutnya">›</button></div>
+  <div class="flex" style="margin-bottom:12px"><button class="chip pc" onclick="agSet(0)">Hari ini</button><button class="chip pc" onclick="agSet(1)">Besok</button></div>
+  ${L.length?`<div class="card"><div class="flex sp"><h3>Ketercapaian agenda</h3><b style="color:var(--gold);font-size:22px;font-family:Sora,sans-serif">${p}%</b></div><div class="bar"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${dn(L)} dari ${L.length} selesai · Ibadah ${dn(ib)}/${ib.length} · Aktivitas ${dn(ac)}/${ac.length}</small><p style="margin-top:6px;font-weight:700;color:var(--gold)">${k>tk?'Rencana siap, insyaAllah dilaksanakan':grade(p)}</p></div>`:''}
+  <div class="h">Jadwal</div>
+  <div class="card" style="padding:4px 14px">${L.length?L.map(a=>{const late=!a.d&&(k<tk||(isT&&a.t<hm));return`<div class="row ${a.d?'on':''}"><button class="ck" onclick="tgA('${a.id}')" aria-label="Tandai selesai">${a.d?'✓':''}</button><span class="t"><span class="tm">${a.t}</span>${esc(a.n)}<small>${a.c==='i'?'Ibadah':'Aktivitas'}${late?' · belum terlaksana':''}</small></span><button class="icb" onclick="editA('${a.id}')" aria-label="Ubah">✎</button><button class="icb" onclick="delA('${a.id}')" aria-label="Hapus" style="color:var(--bad)">×</button></div>`}).join(''):'<p style="padding:14px 0;color:var(--mut)">Belum ada agenda. Tambahkan di bawah atau pakai template cepat.</p>'}</div>
+  <div class="card"><h3>${agE?'Ubah agenda':'Tambah agenda'}</h3><div class="flex"><input id="agt" type="time" style="width:130px" value="06:00"><input id="agn" placeholder="Misal: Tilawah 1 juz" maxlength="60"></div><select id="agc" style="margin-top:8px"><option value="i">Ibadah</option><option value="a">Aktivitas harian</option></select><div class="flex" style="margin-top:10px"><button class="btn sm" onclick="addA()">${agE?'Simpan perubahan':'Tambah'}</button>${agE?'<button class="btn sm o" onclick="agE=null;render()">Batal</button>':''}</div></div>
+  <div class="card"><h3>Susun cepat</h3><div class="flex" style="flex-wrap:wrap"><button class="btn sm" onclick="agTplB()">Template harian bawaan</button>${D.agt?'<button class="btn sm o" onclick="agAdd(D.agt)">Template saya</button>':''}${L.length?'<button class="btn sm o" onclick="agSaveTpl()">Simpan sebagai template saya</button>':''}</div>
+  ${dates.length?`<div class="flex" style="margin-top:10px"><select id="agp">${dates.map(x=>`<option value="${x}">${new Date(x+'T00:00').toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short'})}</option>`).join('')}</select><button class="btn sm o" onclick="agCopy()">Salin</button></div><small style="color:var(--mut)">Salin agenda dari hari lain ke hari ini yang dipilih.</small>`:''}</div>
+  ${L.length?`<div class="card"><h3>Penilaian diri</h3><p style="color:var(--mut);font-size:13px">Seberapa puas Anda dengan ${isT?'hari ini':'hari ini yang dipilih'}?</p><div class="flex">${[1,2,3,4,5].map(n=>`<button class="st ${(r.s||0)>=n?'on':''}" onclick="agRate(${n})" aria-label="${n} bintang">★</button>`).join('')}</div><textarea id="agev" rows="3" placeholder="Evaluasi: apa yang berjalan baik, apa yang perlu diperbaiki besok?" style="margin-top:8px">${esc(r.n||'')}</textarea><button class="btn sm" style="margin-top:10px" onclick="agNote()">Simpan evaluasi</button></div>`:''}</div>`;
+};
+function agSet(n){agD=new Date();agD.setDate(agD.getDate()+n);agE=null;render()}
+function agGo(n){agD=new Date();agD.setDate(agD.getDate()+n);agE=null;go('agenda')}
+function agShift(n){agD=new Date(agD);agD.setDate(agD.getDate()+n);agE=null;render()}
+function addA(){
+  const t=$('#agt').value,n=$('#agn').value.trim(),c=$('#agc').value;
+  if(!t)return toast('Pilih jam');if(!n)return toast('Isi nama agenda');
+  const L=agArr();
+  if(agE){const a=L.find(x=>x.id===agE);if(a){a.t=t;a.n=n;a.c=c}agE=null}
+  else{if(L.length>=40)return toast('Maksimal 40 agenda per hari');L.push({id:'a'+Date.now().toString(36)+Math.floor(Math.random()*999),t,n,c,d:0})}
+  save();render();
+}
+function editA(id){agE=id;render();const a=agArr().find(x=>x.id===id);if(a){$('#agt').value=a.t;$('#agn').value=a.n;$('#agc').value=a.c;$('#agn').scrollIntoView({block:'center'});$('#agn').focus()}}
+function tgA(id){
+  if(agK()>key(new Date()))return toast('Agenda baru bisa dicentang pada harinya');
+  const L=agArr(),a=L.find(x=>x.id===id);if(!a)return;a.d=a.d?0:1;save();render();
+  if(a.d&&L.every(x=>x.d))toast('MasyaAllah, seluruh agenda hari ini tuntas! 🌟');
+}
+function delA(id){if(!confirm('Hapus agenda ini?'))return;D.ag[agK()]=agArr().filter(x=>x.id!==id);save();render()}
+function agAdd(items){
+  const L=agArr();let n=0;
+  (items||[]).forEach(([t,nm,c])=>{if(L.length<40&&!L.some(x=>x.t===t&&x.n===nm)){L.push({id:'a'+Date.now().toString(36)+n+Math.floor(Math.random()*999),t,n:nm,c,d:0});n++}});
+  save();render();toast(n+' agenda ditambahkan');
+}
+function agTplB(){if(agArr().length&&!confirm('Agenda sudah ada. Tambahkan template di bawahnya?'))return;agAdd(tplB())}
+function agSaveTpl(){D.agt=agArr().map(a=>[a.t,a.n,a.c]);save();render();toast('Template tersimpan')}
+function agCopy(){const f=$('#agp').value;agAdd((D.ag[f]||[]).map(a=>[a.t,a.n,a.c]))}
+function agRate(n){D.agr=D.agr||{};D.agr[agK()]=Object.assign({},D.agr[agK()],{s:n});save();render()}
+function agNote(){D.agr=D.agr||{};D.agr[agK()]=Object.assign({},D.agr[agK()],{n:$('#agev').value.trim().slice(0,600)});save();toast('Evaluasi tersimpan')}
+function agHome(){
+  const tk=key(new Date()),L=(D.ag[tk]||[]).slice().sort((a,b)=>a.t.localeCompare(b.t)),h=new Date().getHours();let o='';
+  if(!L.length)o=`<div class="card flex sp"><b>🗓 Belum ada agenda hari ini</b><button class="btn sm" onclick="agGo(0)">Susun</button></div>`;
+  else{const d=L.filter(a=>a.d).length,hm=nowHM(),nx=L.find(a=>!a.d&&a.t>=hm)||L.find(a=>!a.d);
+    o=`<div class="card"><div class="flex sp"><b>🗓 Agenda hari ini: ${d}/${L.length}</b><button class="btn sm o" onclick="agGo(0)">Buka</button></div><div class="bar"><i style="width:${Math.round(d/L.length*100)}%"></i></div>${nx?`<small style="color:var(--mut)">Berikutnya: <b style="color:var(--gold)">${nx.t}</b> ${esc(nx.n)}</small>`:'<small style="color:var(--gold);font-weight:700">Semua agenda selesai. Alhamdulillah!</small>'}</div>`}
+  if(h>=18&&!(D.ag[key(new Date(Date.now()+864e5))]||[]).length)o+=`<div class="card flex sp"><b>🌙 Susun agenda besok</b><button class="btn sm" onclick="agGo(1)">Susun</button></div>`;
+  return o;
+}
+/* ===== TENTANG: panduan teknis, informasi aplikasi, media sosial ===== */
+const APP_V='1.0.0';
+const WA='https://wa.me/6285870906050';
+function loadFA(){
+  if(document.querySelector('#fa'))return;
+  const l=document.createElement('link');l.id='fa';l.rel='stylesheet';
+  l.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+  document.head.appendChild(l);
+}
+const GUIDE=[
+ ['1. Memulai dan masuk',`<ol><li>Buka aplikasi, lalu pilih <b>Daftar</b> atau <b>Masuk</b> dengan email atau akun Google.</li><li>Lupa kata sandi? Isi email lalu ketuk <b>Lupa kata sandi</b>, tautan reset dikirim ke email Anda.</li><li>Tanpa login (mode lokal), data hanya tersimpan di perangkat ini dan tidak bisa dipindah otomatis.</li><li>Untuk keluar: <b>Lainnya, Akun, Keluar</b>.</li></ol>`],
+ ['2. Checklist ibadah dan poin',`<ol><li>Buka tab <b>Ibadah</b> lalu ketuk amalan yang sudah dikerjakan.</li><li>Tiap amalan punya poin (angka +). Persentase hari ini dihitung dari total poin.</li><li><b>Streak</b> bertambah bila capaian harian minimal 60% secara beruntun.</li><li>Level naik setiap 600 poin.</li><li>Gunakan panah di atas untuk mengisi hari sebelumnya.</li></ol>`],
+ ['3. Agenda harian',`<ol><li>Buka tab <b>Agenda</b>, ketuk <b>Besok</b> untuk menyusun rencana esok hari.</li><li>Tambahkan agenda: pilih jam, nama kegiatan, dan jenis (Ibadah atau Aktivitas).</li><li>Pakai <b>Template harian bawaan</b> untuk menyusun cepat. Jam sholat mengikuti kota Anda.</li><li>Simpan susunan favorit lewat <b>Simpan sebagai template saya</b>, atau <b>Salin</b> dari hari lain.</li><li>Pada harinya, centang agenda yang terlaksana. Nilai A sampai D muncul otomatis.</li><li>Isi <b>Penilaian diri</b> (bintang dan catatan) sebagai bahan evaluasi.</li></ol>`],
+ ['4. Target, hafalan, dan tantangan',`<ul><li><b>Target:</b> tab Target, pilih template atau buat sendiri, lalu ubah progres dengan tombol + dan −.</li><li><b>Hafalan:</b> Lainnya, Hafalan. Ketuk status untuk menaikkan dari Baru, Murajaah, lalu Mutqin. Pengingat murajaah muncul setelah 3 hari (baru) atau 7 hari (lancar).</li><li><b>Tantangan:</b> Lainnya, Tantangan. Pilih durasi 7 sampai 40 hari lalu centang kotak setiap hari.</li></ul>`],
+ ['5. Jurnal muhasabah',`<p>Tab <b>Jurnal</b> untuk menulis evaluasi diri harian: yang disyukuri, yang perlu diperbaiki, dan niat untuk besok.</p>`],
+ ['6. Evaluasi dan pencapaian',`<p>Buka <b>Lainnya, Evaluasi</b> untuk grafik 7 hari, rata-rata capaian, amalan paling konsisten dan yang perlu ditingkatkan, ketercapaian agenda, peta konsistensi 5 minggu, serta badge pencapaian.</p>`],
+ ['7. Jadwal sholat dan arah kiblat',`<ul><li>Jadwal dihitung langsung di perangkat (metode Kemenag), jadi tetap jalan tanpa internet. Hasilnya perkiraan dengan selisih sekitar 2 menit.</li><li>Pilih kota atau lokasi GPS di <b>Lainnya, Akun</b>.</li><li><b>Kiblat:</b> Lainnya, Kiblat, lalu izinkan lokasi dan sensor. Jauhkan HP dari logam atau magnet. Jika kompas melenceng, gerakkan HP membentuk angka 8.</li></ul>`],
+ ['8. Pengingat dan notifikasi',`<ul><li>Buka <b>Lainnya, Pengingat</b>, aktifkan notifikasi, lalu tambahkan pengingat dengan jam pilihan Anda.</li><li>Notifikasi sholat dan agenda berbunyi saat aplikasi sedang terbuka.</li><li><b>Notifikasi push</b> (pesan walau aplikasi tertutup) butuh login. Di iPhone, aplikasi harus dipasang ke layar utama lebih dulu.</li></ul>`],
+ ['9. Grup keluarga',`<ol><li>Lainnya, Keluarga, lalu <b>Buat grup</b> dan bagikan kode 6 karakter ke anggota.</li><li>Anggota lain memilih <b>Gabung dengan kode</b>. Maksimal 30 anggota per grup.</li><li>Peringkat 7 hari dan target bersama tampil untuk semua anggota. Ketuk tombol muat ulang untuk memperbarui.</li><li>Poin Anda di peringkat ikut diperbarui saat data tersinkron.</li></ol>`],
+ ['10. Data, sinkronisasi, dan cadangan',`<ul><li>Semua data disimpan di perangkat lebih dulu, jadi aplikasi cepat dan tetap berjalan saat offline.</li><li>Untuk akun yang login, data dikirim ke cloud otomatis sekitar tiap 6 jam atau saat aplikasi ditutup. Gunakan <b>Sinkron sekarang</b> di Lainnya, Akun bila perlu (jeda 2 menit).</li><li>Pindah perangkat: cukup masuk dengan akun yang sama.</li><li>Unduh <b>cadangan</b> berkas JSON secara berkala, dan gunakan <b>Pulihkan</b> bila diperlukan.</li></ul>`],
+ ['11. Pasang aplikasi dan mode offline',`<ul><li><b>Android (Chrome):</b> Lainnya, Akun, <b>Pasang di perangkat</b>, atau menu browser lalu Tambahkan ke layar utama.</li><li><b>iPhone (Safari):</b> ketuk Bagikan, lalu <b>Tambah ke Layar Utama</b>.</li><li>Setelah dibuka sekali dengan internet, aplikasi bisa dipakai offline.</li></ul>`]
+];
+const FAQ=[
+ ['Data saya hilang, apa penyebabnya?','Pastikan Anda masuk dengan akun yang sama. Data lokal ikut terhapus bila Anda membersihkan data browser, jadi sinkronkan dan unduh cadangan secara berkala.'],
+ ['Notifikasi tidak muncul.','Periksa izin notifikasi di browser. Aplikasi harus terbuka, dan di HP matikan penghemat baterai untuk browser atau aplikasi ini.'],
+ ['Jadwal sholat berbeda dengan masjid setempat.','Jadwal adalah perkiraan dengan selisih sekitar 2 menit. Pilih kota terdekat atau gunakan GPS, dan rujuk jadwal masjid untuk keperluan resmi.'],
+ ['Tanggal Hijriah berbeda dengan penetapan pemerintah.','Aplikasi memakai kalender Umm al-Qura yang bisa berbeda satu hari dari penetapan resmi setempat.'],
+ ['Arah kiblat kurang akurat.','Izinkan lokasi dan sensor, jauhkan dari logam, kalibrasi dengan gerakan angka 8, dan cocokkan dengan kompas lain bila ragu.']
+];
+function abtV(){
+  loadFA();
+  const T=[['Versi',APP_V],['Platform','Progressive Web App (HTML, CSS, JavaScript)'],['Login dan data akun','Firebase Authentication dan Cloud Firestore'],['Penyimpanan','Perangkat (lokal) dan cloud untuk akun yang login'],['Jadwal sholat','Dihitung di perangkat, metode Kemenag'],['Notifikasi','Web Notification dan Firebase Cloud Messaging'],['Browser disarankan','Chrome, Edge, Safari, atau Firefox versi terbaru']];
+  const msg=encodeURIComponent('Assalamu\'alaikum, saya ingin bertanya tentang TaqwaLife');
+  return`<div class="card" style="text-align:center;padding:26px 16px"><svg width="64" height="64"><use href="#fl"/></svg><h2 style="font-size:24px;margin-top:8px">Taqwa<span class="lt">Life</span></h2><small style="color:var(--mut)">Versi ${APP_V}</small><p style="color:var(--mut);font-size:13px;margin-top:10px">Pendamping ibadah harian muslim: susun agenda, catat amalan, pantau target, dan evaluasi diri dengan tenang dan konsisten.</p></div>
+  <div class="card"><h3>Panduan penggunaan</h3>${GUIDE.map(g=>`<details><summary>${g[0]}</summary>${g[1]}</details>`).join('')}</div>
+  <div class="card"><h3>Informasi teknis</h3>${T.map(x=>`<div class="flex sp" style="padding:8px 0;border-bottom:1px solid var(--line);align-items:flex-start;gap:16px"><small style="color:var(--mut);flex:none">${x[0]}</small><small style="text-align:right;font-weight:600">${x[1]}</small></div>`).join('')}
+  <p style="color:var(--mut);font-size:12px;margin-top:10px"><b style="color:var(--gold)">Privasi.</b> Data ibadah Anda tersimpan di perangkat dan, bila login, di akun Firebase Anda. Jika memakai lokasi GPS, koordinat ikut tersimpan bersama data akun. Nama dan statistik mingguan Anda terlihat oleh anggota grup keluarga yang Anda ikuti. Tidak ada iklan.</p></div>
+  <div class="card"><h3>Pertanyaan umum</h3>${FAQ.map(f=>`<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</div>
+  <div class="card"><h3>Ikuti dan hubungi kami</h3><div class="soc">
+   <a href="https://instagram.com/kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i>Instagram</a>
+   <a href="https://tiktok.com/@kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i>TikTok</a>
+   <a href="https://www.youtube.com/@kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i>YouTube</a>
+   <a href="${WA}?text=${msg}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i>WhatsApp</a></div>
+  <div class="flex" style="margin-top:14px;flex-wrap:wrap"><button class="btn sm" onclick="shareApp()">Bagikan aplikasi</button><a class="btn sm o" style="text-decoration:none;display:inline-block" href="${WA}?text=${encodeURIComponent('Assalamu\'alaikum, saya ingin memberi saran / melaporkan masalah di TaqwaLife: ')}" target="_blank" rel="noopener noreferrer">Kirim saran atau laporan</a></div></div>`;
+}
+async function shareApp(){
+  const t='Yuk gunakan TaqwaLife untuk merencanakan dan mengevaluasi ibadah harian.',u=location.href.split('#')[0];
+  try{if(navigator.share)await navigator.share({title:'TaqwaLife',text:t,url:u});else{await navigator.clipboard.writeText(t+' '+u);toast('Tautan disalin')}}catch(e){}
+}
 /* ===== PUSH & PASANG APLIKASI ===== */
 async function togglePush(){
   if(D.push){D.push=0;save();if(db&&uid!=='local')db.collection('users').doc(uid).set({token:null},{merge:true}).catch(()=>{});return render()}
