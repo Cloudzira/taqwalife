@@ -1,5 +1,5 @@
 /* TaqwaLife service worker: cache offline + notifikasi push */
-const V = 'taqwalife-v3';
+const V = 'taqwalife-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com'];
 
