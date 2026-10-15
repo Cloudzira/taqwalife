@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0A">
+<title>MuslimLife - Amal Yaumi Harian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#F6F5F1;--ink:#0B0B0B;--card:#fff;--mut:#6B6658;--line:#E6E1D3;--gold:#B8912F;--gold2:#E3C46D;--gg:linear-gradient(135deg,#8E6B14,#E3C46D 50%,#B8912F);--bad:#B4413A}
+body.dark{--bg:#0A0A0A;--ink:#F4EFE0;--card:#151412;--mut:#A39B82;--line:#2B2718;--gold:#D4AF37}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;width:100%;outline:none}
+input:focus,textarea:focus,button:focus-visible{border-color:var(--gold);outline:2px solid var(--gold2);outline-offset:1px}
+h1,h2,h3,.sf{font-family:'Cormorant Garamond',serif;font-weight:700}
+.ar{font-family:'Amiri',serif}
+#splash{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,#1d1708,#000 72%);color:#fff;transition:opacity .6s,visibility .6s}
+#splash.hide{opacity:0;visibility:hidden}
+#splash svg{animation:pop 1.2s cubic-bezier(.2,.9,.3,1.2) both}
+#splash h1{font-size:44px;margin-top:14px;background:var(--gg);-webkit-background-clip:text;background-clip:text;color:transparent}
+#splash p{color:#cdbb8a;margin-top:2px;font-size:13px;letter-spacing:.4px}
+@keyframes pop{from{transform:scale(.5) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+#auth{min-height:100%;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 0,#241c08,#000 65%)}
+.box{background:#121110;color:#F4EFE0;border:1px solid rgba(212,175,55,.45);border-radius:26px 26px 26px 6px;padding:28px 24px;width:100%;max-width:390px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.box h2{font-size:30px}.box p{color:#A39B82;margin:2px 0 14px;font-size:14px}
+.box input{background:#0A0A0A;border-color:#2B2718;color:#F4EFE0;margin-top:10px}
+.tabs{display:flex;background:#0A0A0A;border-radius:12px;padding:4px;margin-bottom:6px}
+.tabs button{flex:1;padding:9px;border-radius:9px;font-weight:700;font-size:13px;color:#A39B82}
+.tabs button.on{background:var(--gg);color:#111}
+.btn{background:var(--gg);color:#111;font-weight:800;border-radius:14px;padding:13px 18px;width:100%;margin-top:16px}
+.btn.o{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn.sm{width:auto;margin:0;padding:9px 14px;font-size:13px;border-radius:10px}
+.lnk{color:var(--gold2);font-weight:600;font-size:13px;margin-top:12px;display:block;text-align:center;width:100%}
+.warn{background:#2a2108;border:1px solid #6b5416;color:#E3C46D;border-radius:12px;padding:10px 12px;font-size:12px;margin-bottom:10px}
+#app{display:none;max-width:620px;margin:0 auto;min-height:100%;padding-bottom:92px}
+header.top{padding:calc(16px + env(safe-area-inset-top)) 20px 6px;display:flex;justify-content:space-between;align-items:center}
+header.top b{font-size:26px;font-family:'Cormorant Garamond',serif}
+.hero{margin:6px 16px 14px;border-radius:28px 28px 28px 8px;padding:22px;background:linear-gradient(145deg,#000,#1c1608);color:#F4EFE0;border:1px solid rgba(212,175,55,.5);display:flex;gap:16px;align-items:center;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-44px;top:-44px;width:150px;height:150px;border-radius:50%;border:22px solid rgba(212,175,55,.1)}
+.hero small{color:var(--gold2);font-weight:600}
+.hero h2{font-size:28px;line-height:1.1;margin:2px 0 10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid rgba(212,175,55,.4);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:600}
+.sec{margin:0 16px 14px}
+.card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--line)}
+.card h3{font-size:20px;margin-bottom:8px}
+.h{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold);margin:16px 4px 8px}
+.pt{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}
+.pt div{padding:8px 2px;border-radius:12px;background:var(--bg);font-size:12px;color:var(--mut)}
+.pt div b{display:block;font-size:14px;color:var(--ink)}
+.pt .nx{background:var(--gg)}.pt .nx,.pt .nx b{color:#111}
+.quote{background:#0B0B0B;color:#F4EFE0;border:1px solid rgba(212,175,55,.45)}
+.quote p{font-family:'Cormorant Garamond',serif;font-size:21px;line-height:1.3;font-weight:600}.quote small{color:var(--gold2);font-weight:700}
+.row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.row:last-child{border:0}
+.ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;transition:.15s;color:#111;font-size:14px;font-weight:800}
+.row.on .ck{background:var(--gg);border-color:var(--gold)}
+.row.on span.t{color:var(--mut)}
+.row .t{flex:1;font-weight:600}.row small{color:var(--mut);font-weight:500;display:block;font-size:12px}
+.pts{font-size:12px;color:var(--gold);font-weight:800}
+.bar{height:8px;background:var(--bg);border-radius:9px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--gg);border-radius:9px;transition:width .4s}
+.flex{display:flex;gap:8px;align-items:center}.sp{justify-content:space-between}
+.icb{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);font-weight:800;font-size:17px;color:var(--gold)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav div{display:flex;width:100%;max-width:620px}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--mut);padding:6px 0;border-radius:12px}
+nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--gold)}
+.pills{display:flex;gap:6px;overflow-x:auto;margin:0 16px 12px;padding-bottom:2px}
+.pills button{padding:8px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:13px;white-space:nowrap}
+.pills button.on{background:var(--gg);color:#111;border-color:transparent}
+.bars{display:flex;gap:8px;align-items:flex-end;height:130px;margin-top:8px}
+.bars div{flex:1;text-align:center;font-size:11px;color:var(--mut);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;background:var(--gg);border-radius:8px 8px 3px 3px;min-height:4px;margin-bottom:4px}
+.tas{width:210px;height:210px;border-radius:50%;margin:10px auto;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#2a2210,#000);color:var(--gold2);font-size:58px;font-family:'Cormorant Garamond',serif;font-weight:700;box-shadow:0 14px 40px rgba(0,0,0,.35),inset 0 0 0 6px rgba(212,175,55,.5);user-select:none}
+.tas:active{transform:scale(.96)}
+.note{border-left:3px solid var(--gold);padding:4px 0 4px 12px;margin:10px 0}
+.note small{color:var(--mut)}
+.del{color:var(--bad);font-size:12px;font-weight:700}
+.bdg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.bdg div{padding:10px 2px;border-radius:14px;background:var(--bg);font-size:11px;line-height:1.2;opacity:.35;filter:grayscale(1)}
+.bdg div.on{opacity:1;filter:none;border:1px solid var(--gold)}
+.bdg span{display:block;font-size:24px}
+.doa .ar{font-size:25px;line-height:1.9;text-align:right;direction:rtl;color:var(--gold)}
+.comp{width:190px;height:190px;border-radius:50%;margin:12px auto;border:2px solid var(--gold);display:grid;place-items:center;position:relative}
+.comp i{position:absolute;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:80px solid var(--gold);top:10px;left:calc(50% - 11px);transform-origin:50% 85px}
+.comp b{font-size:12px;color:var(--mut)}
+label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#111;padding:10px 18px;border-radius:99px;font-weight:700;font-size:13px;opacity:0;transition:.3s;z-index:150;pointer-events:none;max-width:90%;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <svg width="112" height="112" viewBox="0 0 110 110"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E6B14"/><stop offset=".5" stop-color="#E3C46D"/><stop offset="1" stop-color="#B8912F"/></linearGradient></defs><circle cx="55" cy="55" r="52" fill="none" stroke="url(#g)" stroke-width="2.5"/><path d="M70 22a34 34 0 1 0 0 66a27 27 0 1 1 0-66z" fill="url(#g)"/><path d="M78 40l3.4 7.6 8.2.9-6.1 5.6 1.7 8.1-7.2-4.2-7.2 4.2 1.7-8.1-6.1-5.6 8.2-.9z" fill="#fff"/></svg>
+  <h1>MuslimLife</h1><p>Rencanakan, catat, dan evaluasi ibadah harian</p>
+</div>
+
+<div id="auth"><div class="box" id="authBox"></div></div>
+
+<div id="app">
+  <header class="top"><b id="hd">MuslimLife</b><button class="icb" onclick="toggleDark()" aria-label="Ganti tema" id="dk">☾</button></header>
+  <main id="view"></main>
+  <nav><div id="nav"></div></nav>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ========= KONFIGURASI FIREBASE: ganti nilai di bawah dengan milik Anda ========= */
+const FB={apiKey:"ISI_API_KEY",authDomain:"ISI-PROJECT.firebaseapp.com",projectId:"ISI-PROJECT",appId:"ISI_APP_ID"};
+/* ============================================================================== */
+const CFG=typeof firebase!=='undefined'&&FB.apiKey!=="ISI_API_KEY";
+let auth=null,db=null;
+if(CFG){firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore()}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)};
+const defaults=()=>({name:'',days:{},tg:[],nt:[],rm:[],notif:0,city:'Purwokerto',tasbih:0,pt:null,best:0,_ts:0});
+let D=defaults(),uid='local',pendingName='',cloudT;
+
+/* ===== PENYIMPANAN (lokal + Firestore) ===== */
+function save(){
+  D._ts=Date.now();
+  try{localStorage.setItem('muslimlife_v2_'+uid,JSON.stringify(D))}catch(e){}
+  if(db&&uid!=='local'){clearTimeout(cloudT);cloudT=setTimeout(()=>db.collection('users').doc(uid).set({data:JSON.stringify(D)},{merge:true}).catch(()=>toast('Gagal sinkron ke cloud, data tetap aman di perangkat')),1500)}
+}
+async function loadData(){
+  let l=null,c=null;
+  try{l=JSON.parse(localStorage.getItem('muslimlife_v2_'+uid))}catch(e){}
+  if(db&&uid!=='local'){try{const s=await db.collection('users').doc(uid).get();if(s.exists)c=JSON.parse(s.data().data)}catch(e){}}
+  D=Object.assign(defaults(),(c&&(!l||(c._ts||0)>=(l._ts||0)))?c:(l||{}));
+}
+
+/* ===== DATA IBADAH ===== */
+const G=[
+ {n:'Sholat Wajib',i:[['subuh','Subuh',10],['dzuhur','Dzuhur',10],['ashar','Ashar',10],['maghrib','Maghrib',10],['isya','Isya',10]]},
+ {n:'Sholat Sunnah',i:[['rawatib','Rawatib',5,'Qabliyah / Ba\'diyah'],['dhuha','Dhuha',5],['tahajud','Tahajud',8],['witir','Witir',5]]},
+ {n:'Al-Qur\'an & Dzikir',i:[['tilawah','Tilawah Al-Qur\'an',8,'Minimal 1 halaman'],['hafalan','Murajaah / Hafalan',6],['dzpagi','Dzikir Pagi',5],['dzsore','Dzikir Petang',5],['istighfar','Istighfar & Sholawat',3]]},
+ {n:'Amal Sosial & Ilmu',i:[['sedekah','Sedekah',6],['puasa','Puasa Sunnah',10,'Senin, Kamis, atau Ayyamul Bidh'],['ortu','Berbakti pada Orang Tua',5],['ilmu','Menuntut Ilmu',5]]}
+];
+const ALL=G.flatMap(g=>g.i),TOTAL=ALL.reduce((a,x)=>a+x[2],0);
+const QUOTES=[
+ ['Sesungguhnya amal itu tergantung pada niatnya.','HR. Bukhari & Muslim'],
+ ['Amalan yang paling dicintai Allah adalah yang terus-menerus walaupun sedikit.','HR. Bukhari & Muslim'],
+ ['Maka ingatlah kepada-Ku, niscaya Aku ingat kepadamu.','QS. Al-Baqarah: 152'],
+ ['Sesungguhnya bersama kesulitan ada kemudahan.','QS. Asy-Syarh: 6'],
+ ['Barang siapa bertakwa kepada Allah, niscaya Dia memberinya jalan keluar.','QS. At-Talaq: 2'],
+ ['Senyummu di hadapan saudaramu adalah sedekah.','HR. Tirmidzi'],
+ ['Sebaik-baik kalian adalah yang belajar Al-Qur\'an dan mengajarkannya.','HR. Bukhari'],
+ ['Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.','QS. Ar-Ra\'d: 28']
+];
+const DOA=[
+ ['Bangun tidur','اَلْحَمْدُ لِلّٰهِ الَّذِيْ أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ','Segala puji bagi Allah yang menghidupkan kami setelah mematikan kami, dan kepada-Nya kami dikembalikan.'],
+ ['Sebelum tidur','بِاسْمِكَ اللّٰهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ','Dengan nama-Mu ya Allah aku hidup dan aku mati.'],
+ ['Sebelum makan','اَللّٰهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ','Ya Allah, berkahilah rezeki yang Engkau berikan kepada kami dan jagalah kami dari azab neraka.'],
+ ['Setelah makan','اَلْحَمْدُ لِلّٰهِ الَّذِيْ أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ','Segala puji bagi Allah yang telah memberi kami makan dan minum serta menjadikan kami muslim.'],
+ ['Keluar rumah','بِسْمِ اللّٰهِ تَوَكَّلْتُ عَلَى اللّٰهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ','Dengan nama Allah, aku bertawakal kepada Allah. Tiada daya dan kekuatan kecuali dengan pertolongan Allah.'],
+ ['Masuk masjid','اَللّٰهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ','Ya Allah, bukakanlah untukku pintu-pintu rahmat-Mu.'],
+ ['Keluar masjid','اَللّٰهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ','Ya Allah, sungguh aku memohon karunia-Mu.'],
+ ['Doa sapu jagat','رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami dari azab neraka.']
+];
+const BD=[['🔥','Istiqamah 3 hari',()=>best()>=3],['🌙','7 hari beruntun',()=>best()>=7],['👑','30 hari beruntun',()=>best()>=30],['🕌','Hari sempurna',()=>Object.keys(D.days).some(k=>pct(k)===100)],['⭐','500 poin',()=>points()>=500],['💎','1.500 poin',()=>points()>=1500],['🎯','Target tuntas',()=>D.tg.some(t=>t.c>=t.g)],['✍️','5 catatan jurnal',()=>D.nt.length>=5]];
+const best=()=>Math.max(D.best||0,streak());
+const pct=k=>{const d=D.days[k];if(!d)return 0;return Math.round(ALL.reduce((a,x)=>a+(d[x[0]]?x[2]:0),0)/TOTAL*100)};
+const day=k=>D.days[k]||(D.days[k]={});
+function streak(){let s=0,d=new Date();if(pct(key(d))<60)d.setDate(d.getDate()-1);while(pct(key(d))>=60){s++;d.setDate(d.getDate()-1)}return s}
+const points=()=>Object.values(D.days).reduce((a,d)=>a+ALL.reduce((b,x)=>b+(d[x[0]]?x[2]:0),0),0);
+const LV=['Pemula','Pejuang Istiqamah','Penjaga Waktu','Hamba Rajin','Ahli Ibadah','Hamba Pilihan'];
+function level(){const p=points(),i=Math.min(Math.floor(p/600),LV.length-1);return{n:LV[i],i,p,next:(i+1)*600}}
+
+/* ===== AUTENTIKASI FIREBASE ===== */
+let splashDone=false,au;
+function route(){
+  if(!splashDone||au===undefined)return;
+  $('#splash').classList.add('hide');
+  if(au)enterApp(au);else showAuth('in');
+}
+function boot(){
+  const dk=localStorage.getItem('ml_theme');document.body.classList.toggle('dark',dk!=='l');$('#dk').textContent=dk==='l'?'☾':'☀';
+  setTimeout(()=>{splashDone=true;route()},1900);
+  if(CFG)auth.onAuthStateChanged(u=>{au=u||null;route()});else au=null;
+  if('Notification'in window)setInterval(tick,20000);
+}
+function showAuth(m){
+  $('#app').style.display='none';$('#auth').style.display='flex';
+  const reg=m==='reg';let h=`<h2>${reg?'Buat akun':'Assalamu\'alaikum'}</h2><p>${reg?'Mulai perjalanan ibadah yang lebih terencana.':'Masuk untuk melanjutkan amal yaumi Anda.'}</p>`;
+  if(!CFG){
+    h+=`<div class="warn">Firebase belum dikonfigurasi. Isi konfigurasi di bagian atas script untuk mengaktifkan login. Sementara Anda bisa memakai mode lokal.</div>
+    <input id="an" placeholder="Nama Anda" maxlength="30"><button class="btn" onclick="startLocal()">Lanjut mode lokal</button>`;
+  }else{
+    h+=`<div class="tabs"><button class="${reg?'':'on'}" onclick="showAuth('in')">Masuk</button><button class="${reg?'on':''}" onclick="showAuth('reg')">Daftar</button></div>
+    ${reg?'<input id="an" placeholder="Nama lengkap" maxlength="30" autocomplete="name">':''}
+    <input id="ae" type="email" placeholder="Email" autocomplete="email"><input id="ap" type="password" placeholder="Kata sandi (min. 6 karakter)" autocomplete="${reg?'new-password':'current-password'}" onkeydown="if(event.key==='Enter')doAuth('${m}')">
+    <button class="btn" onclick="doAuth('${m}')">${reg?'Daftar sekarang':'Masuk'}</button>
+    <button class="btn o" onclick="google()">Lanjut dengan Google</button>
+    ${reg?'':'<button class="lnk" onclick="forgot()">Lupa kata sandi?</button>'}`;
+  }
+  $('#authBox').innerHTML=h;
+}
+const ERR={'auth/invalid-email':'Format email tidak valid','auth/user-not-found':'Akun tidak ditemukan','auth/wrong-password':'Kata sandi salah','auth/invalid-credential':'Email atau kata sandi salah','auth/email-already-in-use':'Email sudah terdaftar, silakan masuk','auth/weak-password':'Kata sandi minimal 6 karakter','auth/missing-password':'Kata sandi belum diisi','auth/network-request-failed':'Tidak ada koneksi internet','auth/too-many-requests':'Terlalu banyak percobaan, coba lagi nanti','auth/popup-closed-by-user':'Login Google dibatalkan'};
+async function doAuth(m){
+  const e=$('#ae').value.trim(),p=$('#ap').value;
+  try{
+    if(m==='reg'){const n=$('#an').value.trim();if(!n)return toast('Nama wajib diisi');pendingName=n;const r=await auth.createUserWithEmailAndPassword(e,p);await r.user.updateProfile({displayName:n})}
+    else await auth.signInWithEmailAndPassword(e,p);
+  }catch(x){toast(ERR[x.code]||'Terjadi kesalahan: '+(x.code||x.message))}
+}
+async function google(){try{await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())}catch(x){toast(ERR[x.code]||'Login Google gagal')}}
+async function forgot(){const e=$('#ae').value.trim();if(!e)return toast('Isi email dulu');try{await auth.sendPasswordResetEmail(e);toast('Tautan reset dikirim ke email Anda')}catch(x){toast(ERR[x.code]||'Gagal mengirim email')}}
+function startLocal(){au={uid:'local',displayName:$('#an').value.trim()||'Sahabat'};route()}
+function logout(){if(CFG)auth.signOut().then(()=>location.reload());else location.reload()}
+async function enterApp(u){
+  uid=u.uid;await loadData();
+  D.name=D.name||pendingName||u.displayName||(u.email||'Sahabat').split('@')[0];save();
+  $('#auth').style.display='none';$('#app').style.display='block';nav();go('home');loadPT();
+}
+
+/* ===== NAVIGASI ===== */
+const ICO={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',ibadah:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',jurnal:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM9 9h6M9 13h6"/>',more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'};
+const TABS=[['home','Beranda'],['ibadah','Ibadah'],['target','Target'],['jurnal','Jurnal'],['more','Lainnya']];
+let tab='home',cur=new Date(),sub='eval',QB=null,cmp=false;
+function nav(){$('#nav').innerHTML=TABS.map(t=>`<button onclick="go('${t[0]}')" class="${tab===t[0]?'on':''}"><svg viewBox="0 0 24 24">${ICO[t[0]]}</svg>${t[1]}</button>`).join('')}
+function go(t){tab=t;nav();render();scrollTo(0,0)}
+function render(){$('#view').innerHTML=V[tab]();$('#hd').textContent=({home:'MuslimLife',ibadah:'Checklist Ibadah',target:'Target Ibadah',jurnal:'Jurnal Muhasabah',more:'Lainnya'})[tab]}
+function toggleDark(){const d=document.body.classList.toggle('dark');localStorage.setItem('ml_theme',d?'d':'l');$('#dk').textContent=d?'☀':'☾'}
+
+/* ===== TAMPILAN ===== */
+function ring(p,s=104){const r=s/2-8,c=2*Math.PI*r;return`<svg width="${s}" height="${s}" style="flex:none"><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="rgba(212,175,55,.2)" stroke-width="8"/><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="#E3C46D" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p/100)}" transform="rotate(-90 ${s/2} ${s/2})"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#F4EFE0" font-size="24" font-family="Cormorant Garamond,serif" font-weight="700">${p}%</text></svg>`}
+const greet=()=>{const h=new Date().getHours();return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
+const hijri=d=>{try{return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d)}catch(e){return''}};
+const hDay=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric'}).format(d)}catch(e){return 0}};
+function puasaInfo(){
+  const t=new Date(),n=new Date(t);n.setDate(n.getDate()+1);
+  const f=d=>{const w=d.getDay(),h=hDay(d);return w===1?'Senin':w===4?'Kamis':(h>=13&&h<=15)?'Ayyamul Bidh (perkiraan)':''};
+  if(f(t))return'Hari ini sunnah berpuasa: '+f(t);
+  if(f(n))return'Besok sunnah berpuasa: '+f(n)+'. Niatkan dari malam ini.';
+  return'';
+}
+function nextPrayer(){
+  if(!D.pt)return null;const n=new Date(),m=n.getHours()*60+n.getMinutes();
+  for(const[k,v]of D.pt.t){const[h,mm]=v.split(':');if(+h*60+ +mm>m)return k}
+  return D.pt.t[0][0];
+}
+const V={
+home(){
+  const k=key(new Date()),p=pct(k),L=level(),q=QUOTES[Math.floor(new Date()/864e5)%QUOTES.length],np=nextPrayer(),pi=puasaInfo();
+  const doneN=ALL.filter(x=>(D.days[k]||{})[x[0]]).length;
+  return`<div class="hero">${ring(p)}<div><small>${greet()}</small><h2>${esc(D.name)}</h2>
+  <div class="chips"><span class="chip">🔥 ${streak()} hari</span><span class="chip">⭐ ${L.p} poin</span><span class="chip">${L.n}</span></div></div></div>
+  <div class="sec"><div class="card"><b>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><br><small style="color:var(--mut)">${hijri(new Date())}</small>
+  <div class="bar" style="margin-top:12px"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${doneN} dari ${ALL.length} amalan selesai hari ini</small><br>
+  <button class="btn sm" style="margin-top:12px" onclick="cur=new Date();go('ibadah')">Buka checklist hari ini</button></div>
+  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}
+  <div class="card"><h3>Jadwal Sholat · ${esc(D.city)}</h3>${D.pt?`<div class="pt">${D.pt.t.map(x=>`<div class="${x[0]===np?'nx':''}">${x[0]}<b>${x[1]}</b></div>`).join('')}</div>`:'<small style="color:var(--mut)">Memuat jadwal sholat… (butuh internet)</small>'}</div>
+  <div class="card quote"><p>“${q[0]}”</p><small>${q[1]}</small></div>
+  <div class="card"><h3>Level: ${L.n}</h3><div class="bar"><i style="width:${Math.min(100,(L.p%600)/6)}%"></i></div><small style="color:var(--mut)">${L.i<LV.length-1?(L.next-L.p)+' poin lagi menuju level berikutnya':'Level tertinggi. Teruslah istiqamah!'}</small></div></div>`},
+ibadah(){
+  const k=key(cur),d=day(k),isT=k===key(new Date());
+  return`<div class="sec"><div class="card flex sp"><button class="icb" onclick="shift(-1)" aria-label="Hari sebelumnya">‹</button><div style="text-align:center"><b>${isT?'Hari ini':cur.toLocaleDateString('id-ID',{weekday:'long'})}</b><br><small style="color:var(--mut)">${cur.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})} · ${pct(k)}%</small></div><button class="icb" onclick="shift(1)" aria-label="Hari berikutnya">›</button></div>
+  ${G.map(g=>`<div class="h">${g.n}</div><div class="card" style="padding:4px 14px">${g.i.map(x=>`<button class="row ${d[x[0]]?'on':''}" onclick="tg('${x[0]}')"><span class="ck">${d[x[0]]?'✓':''}</span><span class="t">${x[1]}${x[3]?`<small>${x[3]}</small>`:''}</span><span class="pts">+${x[2]}</span></button>`).join('')}</div>`).join('')}</div>`},
+target(){
+  return`<div class="sec"><div class="card"><h3>Tambah target baru</h3><input id="tt" placeholder="Contoh: Khatam Al-Qur'an"><div class="flex" style="margin-top:8px"><input id="tgl" type="number" min="1" placeholder="Jumlah target"><input id="tu" placeholder="Satuan (juz, hari)"></div><button class="btn sm" style="margin-top:10px" onclick="addT()">Simpan target</button></div>
+  ${D.tg.length?D.tg.map((t,i)=>{const p=Math.min(100,Math.round(t.c/t.g*100));return`<div class="card"><div class="flex sp"><b>${esc(t.t)}</b><button class="del" onclick="delT(${i})">Hapus</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="flex sp"><small style="color:var(--mut)">${t.c} / ${t.g} ${esc(t.u)} · ${p}%</small><div class="flex"><button class="icb" onclick="adj(${i},-1)">−</button><button class="icb" onclick="adj(${i},1)">+</button></div></div>${p>=100?'<small style="color:var(--gold);font-weight:700">Alhamdulillah, target tercapai! 🎉</small>':''}</div>`}).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Belum ada target. Tambahkan target pertama Anda di atas.</div>'}</div>`},
+jurnal(){
+  return`<div class="sec"><div class="card"><h3>Muhasabah hari ini</h3><textarea id="nt" rows="4" placeholder="Apa yang sudah baik hari ini? Apa yang ingin diperbaiki besok? Apa yang disyukuri?"></textarea><button class="btn sm" style="margin-top:10px" onclick="addN()">Simpan catatan</button></div>
+  ${D.nt.length?D.nt.map((n,i)=>`<div class="note"><small>${n.d}</small><p>${esc(n.x).replace(/\n/g,'<br>')}</p><button class="del" onclick="delN(${i})">Hapus</button></div>`).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Catatan Anda akan muncul di sini.</div>'}</div>`},
+more(){
+  const S={eval:evalV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,acc:accV};
+  return`<div class="pills">${[['eval','Evaluasi'],['doa','Doa'],['qib','Kiblat'],['zak','Zakat'],['tas','Tasbih'],['rem','Pengingat'],['acc','Akun']].map(p=>`<button class="${sub===p[0]?'on':''}" onclick="sub='${p[0]}';render()">${p[1]}</button>`).join('')}</div><div class="sec">${S[sub]()}</div>`}
+};
+function evalV(){
+  D.best=best();
+  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return[d,pct(key(d))]});
+  const avg=Math.round(days.reduce((a,x)=>a+x[1],0)/7);
+  const cnt=ALL.map(x=>[x[1],[...Array(30)].reduce((a,_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return a+(((D.days[key(d)]||{})[x[0]])?1:0)},0)]).sort((a,b)=>b[1]-a[1]);
+  const msg=avg>=80?'Luar biasa! Pertahankan istiqamah Anda.':avg>=50?'Bagus. Tingkatkan sedikit demi sedikit.':'Mulai dari yang kecil, yang penting konsisten.';
+  return`<div class="card"><h3>Capaian 7 hari terakhir</h3><div class="bars">${days.map(x=>`<div><i style="height:${x[1]}%"></i>${x[0].toLocaleDateString('id-ID',{weekday:'short'})}</div>`).join('')}</div></div>
+  <div class="card"><h3>Rata-rata ${avg}%</h3><p style="color:var(--mut)">${msg}</p></div>
+  <div class="card"><h3>Evaluasi 30 hari</h3><p>✅ Paling konsisten: <b>${cnt[0][1]?cnt[0][0]:'-'}</b></p><p>⚠️ Perlu ditingkatkan: <b>${cnt[cnt.length-1][0]}</b> (${cnt[cnt.length-1][1]}x)</p></div>
+  <div class="card"><h3>Pencapaian</h3><div class="bdg">${BD.map(b=>`<div class="${b[2]()?'on':''}"><span>${b[0]}</span>${b[1]}</div>`).join('')}</div></div>`}
+function doaV(){return DOA.map(d=>`<div class="card doa"><h3>${d[0]}</h3><p class="ar">${d[1]}</p><p style="color:var(--mut);font-size:13px">${d[2]}</p></div>`).join('')}
+function qibV(){
+  return`<div class="card" style="text-align:center"><h3>Arah Kiblat</h3><div class="comp"><i id="nd" style="transform:rotate(${QB||0}deg)"></i><b>${QB==null?'Belum dihitung':Math.round(QB)+'° dari utara'}</b></div>
+  <p style="color:var(--mut);font-size:12px">Ketuk tombol, izinkan lokasi dan sensor. Putar HP hingga panah menunjuk ke atas. Jauhkan dari logam dan magnet, lalu cocokkan dengan kompas lain bila ragu.</p><button class="btn sm" style="margin-top:12px" onclick="kiblat()">Hitung arah kiblat</button></div>`}
+async function startCompass(){
+  try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)await DeviceOrientationEvent.requestPermission()}catch(e){}
+  if(cmp)return;cmp=true;
+  const f=e=>{const h=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.alpha!=null?360-e.alpha:null),n=$('#nd');if(n&&h!=null&&QB!=null)n.style.transform='rotate('+(QB-h)+'deg)'};
+  addEventListener('deviceorientationabsolute',f,true);addEventListener('deviceorientation',f,true);
+}
+async function kiblat(){
+  await startCompass();
+  if(!navigator.geolocation)return toast('Perangkat tidak mendukung lokasi');
+  navigator.geolocation.getCurrentPosition(p=>{
+    const r=Math.PI/180,la=p.coords.latitude*r,lo=p.coords.longitude*r,ka=21.4225*r,ko=39.8262*r,dl=ko-lo;
+    QB=(Math.atan2(Math.sin(dl),Math.cos(la)*Math.tan(ka)-Math.sin(la)*Math.cos(dl))/r+360)%360;render();
+  },()=>toast('Izin lokasi diperlukan'));
+}
+function zakV(){
+  return`<div class="card"><h3>Zakat Maal</h3><label class="l">Total harta tersimpan 1 tahun (Rp)</label><input id="zh" type="number" inputmode="numeric"><label class="l">Harga emas per gram (Rp)</label><input id="zg" type="number" inputmode="numeric"><button class="btn sm" style="margin-top:10px" onclick="zMaal()">Hitung</button><p id="zr1" style="margin-top:10px;font-weight:600"></p></div>
+  <div class="card"><h3>Zakat Fitrah</h3><label class="l">Jumlah jiwa</label><input id="zj" type="number" inputmode="numeric" value="1"><label class="l">Harga beras per kg (Rp)</label><input id="zb" type="number" inputmode="numeric"><button class="btn sm" style="margin-top:10px" onclick="zFitrah()">Hitung</button><p id="zr2" style="margin-top:10px;font-weight:600"></p></div>
+  <small style="color:var(--mut)">Perhitungan ini perkiraan. Nisab zakat maal setara 85 gram emas dan kadarnya 2,5%. Fitrah 2,5 kg beras per jiwa. Konsultasikan dengan lembaga zakat setempat untuk ketentuan terbaru.</small>`}
+const rp=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
+function zMaal(){const h=+$('#zh').value,g=+$('#zg').value;if(!h||!g)return toast('Isi semua kolom');const n=85*g;$('#zr1').innerHTML=h>=n?`Nisab ${rp(n)}. Harta mencapai nisab. Zakat: <span style="color:var(--gold)">${rp(h*.025)}</span>`:`Nisab ${rp(n)}. Harta belum mencapai nisab, belum wajib zakat maal.`}
+function zFitrah(){const j=+$('#zj').value,b=+$('#zb').value;if(!j||!b)return toast('Isi semua kolom');$('#zr2').innerHTML=`${j} jiwa × 2,5 kg = ${j*2.5} kg beras. Setara <span style="color:var(--gold)">${rp(j*2.5*b)}</span>`}
+function tasV(){
+  const z=['Subhanallah','Alhamdulillah','Allahu Akbar'],n=D.tasbih||0,c=n%33;
+  return`<div class="card" style="text-align:center"><h3>Tasbih Digital</h3><p class="ar" style="font-size:30px;color:var(--gold)">${['سُبْحَانَ اللّٰه','اَلْحَمْدُ لِلّٰه','اَللّٰهُ أَكْبَر'][Math.floor(n/33)%3]}</p><small style="color:var(--mut)">${z[Math.floor(n/33)%3]} · putaran ${c}/33 · total ${n}</small>
+  <div class="tas" onclick="tas()" role="button" aria-label="Hitung">${c}</div><button class="btn sm" onclick="D.tasbih=0;save();render()">Reset</button></div>`}
+function remV(){
+  return`<div class="card"><h3>Notifikasi</h3><button class="btn sm ${D.notif?'o':''}" onclick="toggleNotif()">${D.notif?'Aktif · ketuk untuk matikan':'Aktifkan notifikasi'}</button><p style="color:var(--mut);font-size:12px;margin-top:8px">Pengingat berbunyi saat aplikasi terbuka. Waktu sholat ikut diingatkan.</p></div>
+  <div class="card"><h3>Tambah pengingat</h3><div class="flex"><input id="rt" type="time" style="width:120px"><input id="rl" placeholder="Misal: Sholat Tahajud"></div><button class="btn sm" style="margin-top:10px" onclick="addR()">Simpan</button></div>
+  ${D.rm.map((r,i)=>`<div class="card flex sp"><b>${r.t} · ${esc(r.l)}</b><button class="del" onclick="delR(${i})">Hapus</button></div>`).join('')}`}
+function accV(){
+  return`<div class="card"><h3>${esc(D.name)}</h3><small style="color:var(--mut)">${CFG&&uid!=='local'?'Tersinkron ke akun Firebase Anda':'Mode lokal: data hanya di perangkat ini'}</small><label class="l" style="margin-top:12px">Kota jadwal sholat</label><input id="ci" value="${esc(D.city)}"><button class="btn sm" style="margin-top:10px" onclick="setCity()">Simpan kota</button></div>
+  <div class="card"><h3>Cadangan data</h3><div class="flex"><button class="btn sm" onclick="exp()">Unduh cadangan</button><button class="btn sm o" onclick="$('#imp').click()">Pulihkan</button></div><input type="file" id="imp" accept=".json" hidden onchange="imp(this)"></div>
+  <button class="btn" onclick="logout()">Keluar</button>`}
+
+/* ===== AKSI ===== */
+function shift(n){cur.setDate(cur.getDate()+n);render()}
+function tg(id){const d=day(key(cur));d[id]=d[id]?0:1;D.best=best();save();render();if(d[id]&&pct(key(cur))===100)toast('MasyaAllah, semua amalan selesai! 🌟');else if(d[id])toast('Barakallahu fiik, amalan tercatat')}
+function addT(){const t=$('#tt').value.trim(),g=+$('#tgl').value,u=$('#tu').value.trim()||'kali';if(!t||g<1)return toast('Isi nama dan jumlah target');D.tg.push({t,g,u,c:0});save();render()}
+function adj(i,n){D.tg[i].c=Math.max(0,D.tg[i].c+n);save();render()}
+function delT(i){if(confirm('Hapus target ini?')){D.tg.splice(i,1);save();render()}}
+function addN(){const x=$('#nt').value.trim();if(!x)return toast('Catatan masih kosong');D.nt.unshift({d:new Date().toLocaleString('id-ID',{dateStyle:'full',timeStyle:'short'}),x});save();render();toast('Catatan disimpan')}
+function delN(i){if(confirm('Hapus catatan ini?')){D.nt.splice(i,1);save();render()}}
+function tas(){D.tasbih=(D.tasbih||0)+1;save();if(navigator.vibrate)navigator.vibrate(D.tasbih%33===0?[80,40,80]:15);render()}
+function addR(){const t=$('#rt').value,l=$('#rl').value.trim();if(!t||!l)return toast('Isi jam dan nama pengingat');D.rm.push({t,l});save();render()}
+function delR(i){D.rm.splice(i,1);save();render()}
+async function toggleNotif(){
+  if(D.notif){D.notif=0;save();return render()}
+  if(!('Notification'in window))return toast('Browser tidak mendukung notifikasi');
+  const p=await Notification.requestPermission();
+  if(p==='granted'){D.notif=1;save();render();toast('Notifikasi aktif')}else toast('Izin notifikasi ditolak');
+}
+let fired={};
+function tick(){
+  if(!D.notif||$('#app').style.display!=='block')return;
+  const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'),k=key(n)+hm;
+  const L=D.rm.filter(r=>r.t===hm).map(r=>r.l);
+  if(D.pt)D.pt.t.forEach(x=>{if(x[1]===hm)L.push('Waktu sholat '+x[0]+' telah tiba')});
+  if(L.length&&!fired[k]){fired[k]=1;L.forEach(m=>new Notification('MuslimLife',{body:m}))}
+}
+function setCity(){D.city=$('#ci').value.trim()||'Purwokerto';D.pt=null;save();loadPT();toast('Kota disimpan')}
+async function loadPT(){
+  const k=key(new Date())+D.city;
+  if(D.pt&&D.pt.k===k)return render();
+  try{
+    const r=await fetch('https://api.aladhan.com/v1/timingsByCity?city='+encodeURIComponent(D.city)+'&country=Indonesia&method=20');
+    const t=(await r.json()).data.timings;
+    D.pt={k,t:[['Subuh',t.Fajr],['Dzuhur',t.Dhuhr],['Ashar',t.Asr],['Maghrib',t.Maghrib],['Isya',t.Isha]].map(x=>[x[0],x[1].slice(0,5)])};
+    save();if(tab==='home')render();
+  }catch(e){}
+}
+function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='muslimlife-cadangan-'+key(new Date())+'.json';a.click()}
+function imp(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.days)throw 0;D=Object.assign(defaults(),x);save();toast('Data dipulihkan');render()}catch(e){toast('File cadangan tidak valid')}};r.readAsText(f)}
+boot();
+</script>
+</body>
+</html>
