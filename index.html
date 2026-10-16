@@ -213,7 +213,6 @@ body.th-v .card{border-radius:22px;box-shadow:0 6px 20px rgba(124,92,196,.07)}
 .sh-bg{position:absolute;inset:0;background:rgba(0,0,0,.5)}
 .sh{position:relative;width:100%;max-width:620px;background:var(--card);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));animation:up .25s ease;border-top:1px solid var(--line)}
 @keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
-.bis{text-align:center;font-size:26px;color:var(--gold);margin:4px 16px 0;line-height:1.7}
 .hero{isolation:isolate}
 .hero:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46' viewBox='0 0 46 46'><g fill='none' stroke='white' stroke-opacity='.09'><rect x='10' y='10' width='26' height='26'/><rect x='10' y='10' width='26' height='26' transform='rotate(45 23 23)'/></g></svg>")}
 #splash:before,#auth:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46' viewBox='0 0 46 46'><g fill='none' stroke='white' stroke-opacity='.05'><rect x='10' y='10' width='26' height='26'/><rect x='10' y='10' width='26' height='26' transform='rotate(45 23 23)'/></g></svg>")}
@@ -231,7 +230,6 @@ body.th-v .card{border-radius:22px;box-shadow:0 6px 20px rgba(124,92,196,.07)}
 <div id="splash">
   <svg width="124" height="124"><use href="#fl"/></svg>
   <h1>Taqwa<span class="lt">Life</span></h1><p>Rencanakan, catat, dan evaluasi ibadah harian</p>
-  <div class="ar" style="font-size:24px;color:var(--gold2);margin-top:18px">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
 </div>
 
 <div id="auth"><div class="box" id="authBox"></div></div>
@@ -445,7 +443,7 @@ const V={
 home(){
   const k=key(new Date()),p=pct(k),L=level(),q=QUOTES[Math.floor(new Date()/864e5)%QUOTES.length],np=nextPrayer(),pi=puasaInfo();
   const IT=itemsOn(k),doneN=IT.filter(x=>(D.days[k]||{})[x[0]]).length;
-  return`<div class="bis ar">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div><div class="hero">${ring(p)}<div><small class="ar" style="font-size:19px;display:block;line-height:1.5">السَّلَامُ عَلَيْكُمْ</small><small>${greet()}</small><h2>${esc(dn())}</h2>
+  return`<div class="hero">${ring(p)}<div><small class="ar" style="font-size:19px;display:block;line-height:1.5">السَّلَامُ عَلَيْكُمْ</small><small>${greet()}</small><h2>${esc(dn())}</h2>
   <div class="chips"><span class="chip">🔥 ${streak()} hari</span><span class="chip">⭐ ${L.p} poin</span><span class="chip">${L.n}</span></div></div></div>
   <div class="sec"><div class="card"><b>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><br><small style="color:var(--mut)">${hijri(new Date())}</small>
   <div class="bar" style="margin-top:12px"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${doneN} dari ${IT.length} amalan selesai hari ini</small><br>
