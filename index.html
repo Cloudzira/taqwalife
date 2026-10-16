@@ -792,12 +792,10 @@ const FAQ=[
 ];
 function abtV(){
   loadFA();
-  const T=[['Versi',APP_V],['Platform','Progressive Web App (HTML, CSS, JavaScript)'],['Login dan data akun','Firebase Authentication dan Cloud Firestore'],['Penyimpanan','Perangkat (lokal) dan cloud untuk akun yang login'],['Jadwal sholat','Dihitung di perangkat, metode Kemenag'],['Notifikasi','Web Notification dan Firebase Cloud Messaging'],['Browser disarankan','Chrome, Edge, Safari, atau Firefox versi terbaru']];
   const msg=encodeURIComponent('Assalamu\'alaikum, saya ingin bertanya tentang TaqwaLife');
   return`<div class="card" style="text-align:center;padding:26px 16px"><svg width="64" height="64"><use href="#fl"/></svg><h2 style="font-size:24px;margin-top:8px">Taqwa<span class="lt">Life</span></h2><small style="color:var(--mut)">Versi ${APP_V}</small><p style="color:var(--mut);font-size:13px;margin-top:10px">Pendamping ibadah harian muslim: susun agenda, catat amalan, pantau target, dan evaluasi diri dengan tenang dan konsisten.</p></div>
   <div class="card"><h3>Panduan penggunaan</h3>${GUIDE.map(g=>`<details><summary>${g[0]}</summary>${g[1]}</details>`).join('')}</div>
-  <div class="card"><h3>Informasi teknis</h3>${T.map(x=>`<div class="flex sp" style="padding:8px 0;border-bottom:1px solid var(--line);align-items:flex-start;gap:16px"><small style="color:var(--mut);flex:none">${x[0]}</small><small style="text-align:right;font-weight:600">${x[1]}</small></div>`).join('')}
-  <p style="color:var(--mut);font-size:12px;margin-top:10px"><b style="color:var(--gold)">Privasi.</b> Data ibadah Anda tersimpan di perangkat dan, bila login, di akun Firebase Anda. Jika memakai lokasi GPS, koordinat ikut tersimpan bersama data akun. Nama dan statistik mingguan Anda terlihat oleh anggota grup keluarga yang Anda ikuti. Tidak ada iklan.</p></div>
+  <div class="card"><h3>Privasi</h3><p style="color:var(--mut);font-size:13px">Data ibadah Anda tersimpan di perangkat dan, bila login, di akun Firebase Anda. Jika memakai lokasi GPS, koordinat ikut tersimpan bersama data akun. Nama dan statistik mingguan Anda terlihat oleh anggota grup keluarga yang Anda ikuti. Tidak ada iklan.</p></div>
   <div class="card"><h3>Pertanyaan umum</h3>${FAQ.map(f=>`<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</div>
   <div class="card"><h3>Ikuti dan hubungi kami</h3><div class="soc">
    <a href="https://instagram.com/kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i>Instagram</a>
