@@ -247,6 +247,7 @@ body.th-v .card{border-radius:22px;box-shadow:0 6px 20px rgba(124,92,196,.07)}
 <div id="toast"></div>
 
 <script>
+(()=>{const A=t=>typeof t==='string'?t.replace(/\bMinggu\b/g,'Ahad').replace(/\bMin\b/g,'Ahd'):t;['toLocaleDateString','toLocaleString'].forEach(n=>{const o=Date.prototype[n];Date.prototype[n]=function(l,p){const r=o.call(this,l,p);return String(l||'').startsWith('id')?A(r):r}})})();
 /* ========= KONFIGURASI FIREBASE (project taqwalife-a50d4) ========= */
 const FB={apiKey:"AIzaSyCsKwj3TSQzuBGmB4Y__T8L8C1Ga9rFlZs",authDomain:"taqwalife-a50d4.firebaseapp.com",projectId:"taqwalife-a50d4",messagingSenderId:"181591738096",appId:"1:181591738096:web:6ec6bde49cb166c81ca435"};
 const VAPID="BAzmmmBcSR_d0BFYImv0_QDdGNCvywryi2VGGHUpMOMn1aO79QDT84LB4esS1zqz4laVDifmEwlTS5xHR4UOfK8"; /* Kunci web push: Firebase Console > Project settings > Cloud Messaging > Web Push certificates */
@@ -428,7 +429,7 @@ const themeCard=()=>`<div class="card"><h3>Tema tampilan</h3>${themeGrid()}</div
 /* ===== TAMPILAN ===== */
 function ring(p,s=104){const r=s/2-8,c=2*Math.PI*r;return`<svg width="${s}" height="${s}" style="flex:none"><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" style="stroke:var(--rt)" stroke-width="8"/><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" style="stroke:var(--rg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p/100)}" transform="rotate(-90 ${s/2} ${s/2})"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#F4EFE0" font-size="20" font-family="Sora,sans-serif" font-weight="700">${p}%</text></svg>`}
 const greet=()=>{const h=new Date().getHours();return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
-const hijri=d=>{try{return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d)}catch(e){return''}};
+const hijri=d=>{try{return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d).replace(/(\d)\s*[A-Za-z]+\.?$/,'$1')+' H'}catch(e){return''}};
 const hDay=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric'}).format(d)}catch(e){return 0}};
 const hM=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric'}).format(d)}catch(e){return 0}};
 function puasaInfo(){
