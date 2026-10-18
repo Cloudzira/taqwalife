@@ -454,7 +454,7 @@ home(){
   <div class="sec"><div class="card"><b>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><br><small style="color:var(--mut)">${hijri(new Date())}</small>
   <div class="bar" style="margin-top:12px"><i style="width:${p}%"></i></div><small style="color:var(--mut)">${doneN} dari ${IT.length} amalan selesai hari ini</small><br>
   <div class="flex" style="margin-top:12px"><button class="btn sm" onclick="cur=new Date();go('ibadah')">Buka checklist hari ini</button><button class="btn sm o" onclick="shareProg()">Bagikan</button></div></div>
-  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}${irem()}${agHome()}${kjHome()}${ramInfo()}${hafDue()}
+  ${pi?`<div class="card" style="border-color:var(--gold)"><b style="color:var(--gold)">🌙 ${pi}</b></div>`:''}${irem()}${agHome()}${kjHome()}${ramCount()}${ramInfo()}${hafDue()}
   <div class="card"><h3>Jadwal Sholat · ${esc(D.city)}</h3>${nxi()}${D.pt?`<div class="pt">${D.pt.t.map(x=>`<div class="${x[0]===np?'nx':''}">${x[0]}<b>${x[1]}</b></div>`).join('')}</div>`:'<small style="color:var(--mut)">Memuat jadwal sholat… (butuh internet)</small>'}</div>
   <div class="card quote"><p>“${q[0]}”</p><small>${q[1]}</small></div>
   <div class="card"><h3>Level: ${L.n}</h3><div class="bar"><i style="width:${Math.min(100,(L.p%600)/6)}%"></i></div><small style="color:var(--mut)">${L.i<LV.length-1?(L.next-L.p)+' poin lagi menuju level berikutnya':'Level tertinggi. Teruslah istiqamah!'}</small></div></div>`},
@@ -663,6 +663,15 @@ function delH(i){if(confirm('Hapus catatan hafalan ini?')){D.hf.splice(i,1);save
 /* ===== TANTANGAN & RAMADHAN ===== */
 const CPRE=[['Ramadhan: 1 juz per hari',30],['Tahajud 30 hari',30],['Dhuha 21 hari',21],['Sedekah tiap hari',30],['Sholat berjamaah 7 hari',7],['Dzikir pagi petang 40 hari',40]];
 const addMin=(t,n)=>{const[h,m]=t.split(':'),x=((+h*60+ +m+n)%1440+1440)%1440;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')};
+function ramCount(){
+  if(hM(new Date())===9)return'';
+  const t=new Date(),b=new Date(t.getFullYear(),t.getMonth(),t.getDate(),12);let n=0,dt=null;
+  for(let i=1;i<=400;i++){const d=new Date(b.getFullYear(),b.getMonth(),b.getDate()+i,12);if(hM(d)===9&&hDay(d)===1){n=i;dt=d;break}}
+  if(!n)return'';
+  const yr=(hijri(dt).match(/(\d{4})/)||[])[1]||'',w=Math.floor(n/7),r=n%7;
+  const sub=n===1?'Besok awal Ramadhan (perkiraan)':(n<=7?'Tinggal beberapa hari lagi. Perbanyak doa dan persiapan.':w>=1?w+' pekan'+(r?' '+r+' hari':''):'');
+  const msg=n<=30?'Mulai biasakan tilawah, puasa sunnah, dan perbanyak istighfar.':'Waktu yang baik untuk menyiapkan ilmu, fisik, dan niat.';
+  return`<div class="card" style="border-color:var(--gold);text-align:center"><small style="color:var(--mut)">Menuju Ramadhan ${yr} H</small><div style="font-size:44px;font-weight:700;color:var(--gold);line-height:1.2">${n}</div><b>hari lagi</b><br><small style="color:var(--mut)">${sub?sub+' · ':''}${dt.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} (perkiraan)</small><p style="color:var(--mut);font-size:12px;margin-top:8px">${msg}</p></div>`}
 function ramInfo(){
   if(hM(new Date())!==9||!D.pt)return'';
   const has=D.ch.some(c=>c.n.startsWith('Ramadhan'));
