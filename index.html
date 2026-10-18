@@ -239,7 +239,7 @@ body.th-v .card{border-radius:22px;box-shadow:0 6px 20px rgba(124,92,196,.07)}
 <div id="auth"><div class="box" id="authBox"></div></div>
 
 <div id="app">
-  <header class="top"><span class="flex"><svg class="lg"><use href="#fl"/></svg><b id="hd">TaqwaLife</b></span><span class="flex"><button class="icb" onclick="openAbout()" aria-label="Tentang dan informasi aplikasi" title="Tentang" id="ab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button><button class="icb" onclick="openThemes()" aria-label="Pilih tema" title="Tema" id="dk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.3-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.3A3.7 3.7 0 0022 11 9 9 0 0012 3z"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10" cy="7" r="1.1" fill="currentColor"/><circle cx="15" cy="7" r="1.1" fill="currentColor"/></svg></button><button class="icb" onclick="go('acc')" aria-label="Akun" title="Akun" id="ak"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.7 3.8-5.5 7.5-5.5s6.7 1.8 7.5 5.5"/></svg></button></span></header>
+  <header class="top"><span class="flex"><svg class="lg"><use href="#fl"/></svg><b id="hd">TaqwaLife</b></span><span class="flex"><button class="btn sm" id="ins" onclick="pasang()" style="display:none">Install App</button><button class="icb" onclick="openAbout()" aria-label="Tentang dan informasi aplikasi" title="Tentang" id="ab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button><button class="icb" onclick="openThemes()" aria-label="Pilih tema" title="Tema" id="dk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.3-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.3A3.7 3.7 0 0022 11 9 9 0 0012 3z"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10" cy="7" r="1.1" fill="currentColor"/><circle cx="15" cy="7" r="1.1" fill="currentColor"/></svg></button><button class="icb" onclick="go('acc')" aria-label="Akun" title="Akun" id="ak"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.7 3.8-5.5 7.5-5.5s6.7 1.8 7.5 5.5"/></svg></button></span></header>
   <main id="view"></main>
   <footer class="ft">Crafted with <span>♥</span> by <b>Kurniapedia</b> 2026</footer>
   <nav><div id="nav"></div></nav>
@@ -509,7 +509,6 @@ function accV(){
   ${themeCard()}
   <div class="card"><h3>Sinkronisasi</h3><small style="color:var(--mut)">${syncInfo()}</small><br><button class="btn sm" style="margin-top:10px" onclick="syncNow()">Sinkron sekarang</button></div>
   <div class="card"><h3>Cadangan data</h3><div class="flex"><button class="btn sm" onclick="exp()">Unduh cadangan</button><button class="btn sm o" onclick="$('#imp').click()">Pulihkan</button></div><input type="file" id="imp" accept=".json" hidden onchange="imp(this)"></div>
-  ${matchMedia('(display-mode: standalone)').matches?'':`<div class="card"><h3>Pasang aplikasi</h3>${inst?'<button class="btn sm" onclick="pasang()">Pasang di perangkat</button>':'<small style="color:var(--mut)">Buka menu browser lalu pilih Tambahkan ke layar utama (iPhone: Bagikan, lalu Tambah ke Layar Utama).</small>'}</div>`}
   <button class="btn" onclick="logout()">Keluar</button>`}
 
 /* ===== AKSI ===== */
@@ -771,7 +770,7 @@ const GUIDE=[
  ['8. Pengingat dan notifikasi',`<ul><li>Buka <b>Lainnya, Pengingat</b>, aktifkan notifikasi, lalu tambahkan pengingat dengan jam pilihan Anda.</li><li>Notifikasi sholat dan agenda berbunyi saat aplikasi sedang terbuka.</li><li><b>Pengingat islami</b> (dzikir pagi dan petang, adab tidur, amalan Jumat) tampil di beranda dan bisa diaktifkan atau dimatikan di Pengingat.</li><li><b>Notifikasi push</b> (pesan walau aplikasi tertutup) butuh login. Di iPhone, aplikasi harus dipasang ke layar utama lebih dulu.</li></ul>`],
  ['9. Grup keluarga',`<ol><li>Lainnya, Keluarga, lalu <b>Buat grup</b> dan bagikan kode 6 karakter ke anggota.</li><li>Anggota lain memilih <b>Gabung dengan kode</b>. Maksimal 30 anggota per grup.</li><li>Peringkat 7 hari dan target bersama tampil untuk semua anggota. Ketuk tombol muat ulang untuk memperbarui.</li><li>Poin Anda di peringkat ikut diperbarui saat data tersinkron.</li></ol>`],
  ['10. Data, sinkronisasi, dan cadangan',`<ul><li>Semua data disimpan di perangkat lebih dulu, jadi aplikasi cepat dan tetap berjalan saat offline.</li><li>Untuk akun yang login, data dikirim ke cloud otomatis sekitar tiap 6 jam atau saat aplikasi ditutup. Gunakan <b>Sinkron sekarang</b> di Akun bila perlu (jeda 2 menit).</li><li>Pindah perangkat: cukup masuk dengan akun yang sama.</li><li>Unduh <b>cadangan</b> berkas JSON secara berkala, dan gunakan <b>Pulihkan</b> bila diperlukan.</li></ul>`],
- ['11. Pasang aplikasi dan mode offline',`<ul><li><b>Android (Chrome):</b> Akun, <b>Pasang di perangkat</b>, atau menu browser lalu Tambahkan ke layar utama.</li><li><b>iPhone (Safari):</b> ketuk Bagikan, lalu <b>Tambah ke Layar Utama</b>.</li><li>Setelah dibuka sekali dengan internet, aplikasi bisa dipakai offline.</li></ul>`],
+ ['11. Pasang aplikasi dan mode offline',`<ul><li><b>Android (Chrome):</b> ketuk tombol <b>Install App</b> di bagian atas, atau menu browser lalu Tambahkan ke layar utama.</li><li><b>iPhone (Safari):</b> ketuk Bagikan, lalu <b>Tambah ke Layar Utama</b>.</li><li>Setelah dibuka sekali dengan internet, aplikasi bisa dipakai offline.</li></ul>`],
  ['12. Tema tampilan',`<p>Tersedia 6 tema: <b>Gelap</b>, <b>Terang</b>, <b>Muslimah</b>, <b>Zamrud</b>, <b>Biru Malam</b>, dan <b>Lavender</b>. Ketuk ikon palet di pojok kanan atas untuk memilih, atau buka <b>Akun, Tema tampilan</b>.</p>`]
 ];
 const FAQ=[
@@ -944,7 +943,11 @@ async function togglePush(){
     await db.collection('users').doc(uid).set({token},{merge:true});D.push=1;D.notif=1;save();render();toast('Push aktif');
   }catch(e){toast('Gagal mengaktifkan push')}
 }
-async function pasang(){if(!inst)return;inst.prompt();await inst.userChoice;inst=null;render()}
+async function pasang(){if(!inst)return toast('Buka menu browser lalu pilih Tambahkan ke layar utama (iPhone: Bagikan, lalu Tambah ke Layar Utama).');inst.prompt();await inst.userChoice;inst=null;render()}
+let instd=false;
+function updIns(){const b=$('#ins');if(b)b.style.display=(matchMedia('(display-mode: standalone)').matches||navigator.standalone||instd)?'none':''}
+addEventListener('appinstalled',()=>{instd=true;updIns()});
+updIns();
 
 boot();
 </script>
