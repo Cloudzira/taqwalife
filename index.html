@@ -100,9 +100,6 @@ nav button.on{color:var(--gold)}
 .bdg div.on{opacity:1;filter:none;border:1px solid var(--gold)}
 .bdg span{display:block;font-size:24px}
 .doa .ar{font-size:25px;line-height:1.9;text-align:right;direction:rtl;color:var(--gold)}
-.comp{width:190px;height:190px;border-radius:50%;margin:12px auto;border:2px solid var(--gold);display:grid;place-items:center;position:relative}
-.comp i{position:absolute;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:80px solid var(--gold);top:10px;left:calc(50% - 11px);transform-origin:50% 85px}
-.comp b{font-size:12px;color:var(--mut)}
 label.l{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 #toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#111;padding:10px 18px;border-radius:99px;font-weight:700;font-size:13px;opacity:0;transition:.3s;z-index:150;pointer-events:none;max-width:90%;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -402,7 +399,7 @@ async function enterApp(u){
 /* ===== NAVIGASI ===== */
 const ICO={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',ibadah:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 16h8"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',jurnal:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM9 9h6M9 13h6"/>',agenda:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M8 15h3"/>',more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'};
 const TABS=[['home','Beranda'],['ibadah','Ibadah'],['agenda','Agenda'],['target','Target'],['more','Lainnya']];
-let tab='home',cur=new Date(),sub='',QB=null,cmp=false;
+let tab='home',cur=new Date(),sub='';
 function nav(){$('#nav').innerHTML=TABS.map(t=>`<button onclick="${t[0]==='more'?`sub='';`:''}go('${t[0]}')" class="${tab===t[0]?'on':''}"><svg viewBox="0 0 24 24">${ICO[t[0]]}</svg>${t[1]}</button>`).join('')}
 function go(t){tab=t;nav();render();scrollTo(0,0)}
 function render(){$('#view').innerHTML=V[tab]();$('#hd').innerHTML=tab==='home'?'Taqwa<span class="lt">Life</span>':({acc:'Akun',ibadah:'Checklist Ibadah',agenda:'Agenda Harian',target:'Target Ibadah',jurnal:'Jurnal Muhasabah',more:'Lainnya'})[tab]}
@@ -476,7 +473,7 @@ jurnal(){
   return`<div class="card"><h3>Muhasabah hari ini</h3><textarea id="nt" rows="4" placeholder="Apa yang sudah baik hari ini? Apa yang ingin diperbaiki besok? Apa yang disyukuri?"></textarea><button class="btn sm" style="margin-top:10px" onclick="addN()">Simpan catatan</button></div>
   ${D.nt.length?D.nt.map((n,i)=>`<div class="note"><small>${n.d}</small><p>${esc(n.x).replace(/\n/g,'<br>')}</p><button class="del" onclick="delN(${i})">Hapus</button></div>`).join(''):'<div class="card" style="text-align:center;color:var(--mut)">Catatan Anda akan muncul di sini.</div>'}`},
 more(){
-  const S={eval:evalV,fam:famV,haf:hafV,cha:chaV,doa:doaV,qib:qibV,zak:zakV,tas:tasV,rem:remV,abt:abtV,jur:()=>V.jurnal(),kjn:kajianV};
+  const S={eval:evalV,fam:famV,haf:hafV,cha:chaV,doa:doaV,tas:tasV,rem:remV,abt:abtV,jur:()=>V.jurnal(),kjn:kajianV};
   if(!sub||!S[sub])return menuV();
   const ti=(MENU.find(x=>x[0]===sub)||[0,'Tentang'])[1];
   return`<div class="sec"><div class="flex" style="margin-bottom:12px"><button class="icb" onclick="sub='';render()" aria-label="Kembali ke menu Lainnya">‹</button><b style="font-family:Sora,sans-serif;font-size:16px">${ti}</b></div>${S[sub]()}</div>`}
@@ -494,30 +491,6 @@ function evalV(){
   <div class="card"><h3>Ketercapaian agenda 7 hari</h3><div class="bars">${a7.map(x=>`<div><i style="height:${x[1]||0}%"></i>${x[0].toLocaleDateString('id-ID',{weekday:'short'})}</div>`).join('')}</div><p style="color:var(--mut);font-size:13px;margin-top:6px">${ava===null?'Belum ada agenda. Susun agenda harian di tab Agenda.':'Rata-rata '+ava+'% ('+grade(ava)+') dari '+av.length+' hari beragenda.'}</p></div>
   <div class="card"><h3>Peta konsistensi 5 minggu</h3><div class="hm">${[...Array(35)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-34+i);const p=pct(key(d));return`<i title="${key(d)}: ${p}%" style="${p?`background:var(--gold);opacity:${(.2+p/100*.8).toFixed(2)}`:'background:var(--bg)'}"></i>`}).join('')}</div></div>
   <div class="card"><h3>Pencapaian</h3><div class="bdg">${BD.map(b=>`<div class="${b[2]()?'on':''}"><span>${b[0]}</span>${b[1]}</div>`).join('')}</div></div>`}
-function qibV(){
-  return`<div class="card" style="text-align:center"><h3>Arah Kiblat</h3><div class="comp"><i id="nd" style="transform:rotate(${QB||0}deg)"></i><b>${QB==null?'Belum dihitung':Math.round(QB)+'° dari utara'}</b></div>
-  <p style="color:var(--mut);font-size:12px">Ketuk tombol, izinkan lokasi dan sensor. Putar HP hingga panah menunjuk ke atas. Jauhkan dari logam dan magnet, lalu cocokkan dengan kompas lain bila ragu.</p><button class="btn sm" style="margin-top:12px" onclick="kiblat()">Hitung arah kiblat</button></div>`}
-async function startCompass(){
-  try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)await DeviceOrientationEvent.requestPermission()}catch(e){}
-  if(cmp)return;cmp=true;
-  const f=e=>{const h=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.alpha!=null?360-e.alpha:null),n=$('#nd');if(n&&h!=null&&QB!=null)n.style.transform='rotate('+(QB-h)+'deg)'};
-  addEventListener('deviceorientationabsolute',f,true);addEventListener('deviceorientation',f,true);
-}
-async function kiblat(){
-  await startCompass();
-  if(!navigator.geolocation)return toast('Perangkat tidak mendukung lokasi');
-  navigator.geolocation.getCurrentPosition(p=>{
-    const r=Math.PI/180,la=p.coords.latitude*r,lo=p.coords.longitude*r,ka=21.4225*r,ko=39.8262*r,dl=ko-lo;
-    QB=(Math.atan2(Math.sin(dl),Math.cos(la)*Math.tan(ka)-Math.sin(la)*Math.cos(dl))/r+360)%360;render();
-  },()=>toast('Izin lokasi diperlukan'));
-}
-function zakV(){
-  return`<div class="card"><h3>Zakat Maal</h3><label class="l">Total harta tersimpan 1 tahun (Rp)</label><input id="zh" type="number" inputmode="numeric"><label class="l">Harga emas per gram (Rp)</label><input id="zg" type="number" inputmode="numeric"><button class="btn sm" style="margin-top:10px" onclick="zMaal()">Hitung</button><p id="zr1" style="margin-top:10px;font-weight:600"></p></div>
-  <div class="card"><h3>Zakat Fitrah</h3><label class="l">Jumlah jiwa</label><input id="zj" type="number" inputmode="numeric" value="1"><label class="l">Harga beras per kg (Rp)</label><input id="zb" type="number" inputmode="numeric"><button class="btn sm" style="margin-top:10px" onclick="zFitrah()">Hitung</button><p id="zr2" style="margin-top:10px;font-weight:600"></p></div>
-  <small style="color:var(--mut)">Perhitungan ini perkiraan. Nisab zakat maal setara 85 gram emas dan kadarnya 2,5%. Fitrah 2,5 kg beras per jiwa. Konsultasikan dengan lembaga zakat setempat untuk ketentuan terbaru.</small>`}
-const rp=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
-function zMaal(){const h=+$('#zh').value,g=+$('#zg').value;if(!h||!g)return toast('Isi semua kolom');const n=85*g;$('#zr1').innerHTML=h>=n?`Nisab ${rp(n)}. Harta mencapai nisab. Zakat: <span style="color:var(--gold)">${rp(h*.025)}</span>`:`Nisab ${rp(n)}. Harta belum mencapai nisab, belum wajib zakat maal.`}
-function zFitrah(){const j=+$('#zj').value,b=+$('#zb').value;if(!j||!b)return toast('Isi semua kolom');$('#zr2').innerHTML=`${j} jiwa × 2,5 kg = ${j*2.5} kg beras. Setara <span style="color:var(--gold)">${rp(j*2.5*b)}</span>`}
 function tasV(){
   const z=['Subhanallah','Alhamdulillah','Allahu Akbar'],n=D.tasbih||0,c=n%33;
   return`<div class="card" style="text-align:center"><h3>Tasbih Digital</h3><p class="ar" style="font-size:30px;color:var(--gold)">${['سُبْحَانَ اللّٰه','اَلْحَمْدُ لِلّٰه','اَللّٰهُ أَكْبَر'][Math.floor(n/33)%3]}</p><small style="color:var(--mut)">${z[Math.floor(n/33)%3]} · putaran ${c}/33 · total ${n}</small>
@@ -783,7 +756,7 @@ const GUIDE=[
  ['4. Target, hafalan, dan tantangan',`<ul><li><b>Target:</b> tab Target, pilih template atau buat sendiri, lalu ubah progres dengan tombol + dan −.</li><li><b>Hafalan:</b> Lainnya, Hafalan. Ketuk status untuk menaikkan dari Baru, Murajaah, lalu Mutqin. Pengingat murajaah muncul setelah 3 hari (baru) atau 7 hari (lancar).</li><li><b>Tantangan:</b> Lainnya, Tantangan. Pilih durasi 7 sampai 40 hari lalu centang kotak setiap hari.</li></ul>`],
  ['5. Jurnal muhasabah',`<p>Tab <b>Jurnal</b> untuk menulis evaluasi diri harian: yang disyukuri, yang perlu diperbaiki, dan niat untuk besok.</p>`],
  ['6. Evaluasi dan pencapaian',`<p>Buka <b>Lainnya, Evaluasi</b> untuk grafik 7 hari, rata-rata capaian, amalan paling konsisten dan yang perlu ditingkatkan, ketercapaian agenda, peta konsistensi 5 minggu, serta badge pencapaian.</p>`],
- ['7. Jadwal sholat dan arah kiblat',`<ul><li>Jadwal dihitung langsung di perangkat (metode Kemenag), jadi tetap jalan tanpa internet. Hasilnya perkiraan dengan selisih sekitar 2 menit.</li><li>Pilih kota atau lokasi GPS di <b>Akun</b>.</li><li><b>Kiblat:</b> Lainnya, Kiblat, lalu izinkan lokasi dan sensor. Jauhkan HP dari logam atau magnet. Jika kompas melenceng, gerakkan HP membentuk angka 8.</li></ul>`],
+ ['7. Jadwal sholat',`<ul><li>Jadwal dihitung langsung di perangkat (metode Kemenag), jadi tetap jalan tanpa internet. Hasilnya perkiraan dengan selisih sekitar 2 menit.</li><li>Pilih kota atau lokasi GPS di <b>Akun</b>.</li></ul>`],
  ['8. Pengingat dan notifikasi',`<ul><li>Buka <b>Lainnya, Pengingat</b>, aktifkan notifikasi, lalu tambahkan pengingat dengan jam pilihan Anda.</li><li>Notifikasi sholat dan agenda berbunyi saat aplikasi sedang terbuka.</li><li><b>Pengingat islami</b> (dzikir pagi dan petang, adab tidur, amalan Jumat) tampil di beranda dan bisa diaktifkan atau dimatikan di Pengingat.</li><li><b>Notifikasi push</b> (pesan walau aplikasi tertutup) butuh login. Di iPhone, aplikasi harus dipasang ke layar utama lebih dulu.</li></ul>`],
  ['9. Grup keluarga',`<ol><li>Lainnya, Keluarga, lalu <b>Buat grup</b> dan bagikan kode 6 karakter ke anggota.</li><li>Anggota lain memilih <b>Gabung dengan kode</b>. Maksimal 30 anggota per grup.</li><li>Peringkat 7 hari dan target bersama tampil untuk semua anggota. Ketuk tombol muat ulang untuk memperbarui.</li><li>Poin Anda di peringkat ikut diperbarui saat data tersinkron.</li></ol>`],
  ['10. Data, sinkronisasi, dan cadangan',`<ul><li>Semua data disimpan di perangkat lebih dulu, jadi aplikasi cepat dan tetap berjalan saat offline.</li><li>Untuk akun yang login, data dikirim ke cloud otomatis sekitar tiap 6 jam atau saat aplikasi ditutup. Gunakan <b>Sinkron sekarang</b> di Akun bila perlu (jeda 2 menit).</li><li>Pindah perangkat: cukup masuk dengan akun yang sama.</li><li>Unduh <b>cadangan</b> berkas JSON secara berkala, dan gunakan <b>Pulihkan</b> bila diperlukan.</li></ul>`],
@@ -794,8 +767,7 @@ const FAQ=[
  ['Data saya hilang, apa penyebabnya?','Pastikan Anda masuk dengan akun yang sama. Data lokal ikut terhapus bila Anda membersihkan data browser, jadi sinkronkan dan unduh cadangan secara berkala.'],
  ['Notifikasi tidak muncul.','Periksa izin notifikasi di browser. Aplikasi harus terbuka, dan di HP matikan penghemat baterai untuk browser atau aplikasi ini.'],
  ['Jadwal sholat berbeda dengan masjid setempat.','Jadwal adalah perkiraan dengan selisih sekitar 2 menit. Pilih kota terdekat atau gunakan GPS, dan rujuk jadwal masjid untuk keperluan resmi.'],
- ['Tanggal Hijriah berbeda dengan penetapan pemerintah.','Aplikasi memakai kalender Umm al-Qura yang bisa berbeda satu hari dari penetapan resmi setempat.'],
- ['Arah kiblat kurang akurat.','Izinkan lokasi dan sensor, jauhkan dari logam, kalibrasi dengan gerakan angka 8, dan cocokkan dengan kompas lain bila ragu.']
+ ['Tanggal Hijriah berbeda dengan penetapan pemerintah.','Aplikasi memakai kalender Umm al-Qura yang bisa berbeda satu hari dari penetapan resmi setempat.']
 ];
 function abtV(){
   loadFA();
@@ -943,12 +915,10 @@ const ICOS={
  pen:'<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 013 3L8 19l-4 1zM14 7l3 3"/>',
  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6"/>',
  moon:'<path d="M20 14.5A8.5 8.5 0 119.5 4a7 7 0 0010.5 10.5z"/><path d="M17 3l.7 1.8 1.8.7-1.8.7L17 8l-.7-1.8-1.8-.7 1.8-.7z"/>',
- compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
- coins:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
  beads:'<circle cx="12" cy="5" r="1.6"/><circle cx="18" cy="8.5" r="1.6"/><circle cx="18" cy="15" r="1.6"/><circle cx="12" cy="19" r="1.6"/><circle cx="6" cy="15" r="1.6"/><circle cx="6" cy="8.5" r="1.6"/><path d="M12 19v3"/>',
  bell:'<path d="M6 17v-6a6 6 0 0112 0v6l1.5 2h-15zM10 21h4"/>'
 };
-const MENU=[['eval','Evaluasi','chart'],['fam','Keluarga','people'],['haf','Hafalan','book'],['cha','Tantangan','flag'],['jur','Jurnal','pen'],['kjn','Kajian','mic'],['doa','Doa','moon'],['qib','Kiblat','compass'],['zak','Zakat','coins'],['tas','Tasbih','beads'],['rem','Pengingat','bell']];
+const MENU=[['eval','Evaluasi','chart'],['fam','Keluarga','people'],['haf','Hafalan','book'],['cha','Tantangan','flag'],['jur','Jurnal','pen'],['kjn','Kajian','mic'],['doa','Doa','moon'],['tas','Tasbih','beads'],['rem','Pengingat','bell']];
 function menuV(){
   return`<div class="mg">${MENU.map(m=>`<button class="mt" onclick="sub='${m[0]}';render();scrollTo(0,0)"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ICOS[m[2]]}</svg></i>${m[1]}</button>`).join('')}</div>`;
 }
