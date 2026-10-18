@@ -429,7 +429,8 @@ const themeCard=()=>`<div class="card"><h3>Tema tampilan</h3>${themeGrid()}</div
 /* ===== TAMPILAN ===== */
 function ring(p,s=104){const r=s/2-8,c=2*Math.PI*r;return`<svg width="${s}" height="${s}" style="flex:none"><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" style="stroke:var(--rt)" stroke-width="8"/><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" style="stroke:var(--rg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p/100)}" transform="rotate(-90 ${s/2} ${s/2})"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#F4EFE0" font-size="20" font-family="Sora,sans-serif" font-weight="700">${p}%</text></svg>`}
 const greet=()=>{const h=new Date().getHours();return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
-const hijri=d=>{try{return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d).replace(/(\d)\s*[A-Za-z]+\.?$/,'$1')+' H'}catch(e){return''}};
+const HM=["Muharram","Safar","Rabiul Awal","Rabiul Akhir","Jumadil Awal","Jumadil Akhir","Rajab","Sya'ban","Ramadhan","Syawal","Dzulqa'dah","Dzulhijjah"];
+const hijri=d=>{try{const p=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'}).formatToParts(d),g=t=>(p.find(x=>x.type===t)||{}).value;return g('day')+' '+HM[+g('month')-1]+' '+g('year').replace(/\D/g,'')+' H'}catch(e){return''}};
 const hDay=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric'}).format(d)}catch(e){return 0}};
 const hM=d=>{try{return +new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric'}).format(d)}catch(e){return 0}};
 function puasaInfo(){
