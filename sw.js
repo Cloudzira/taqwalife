@@ -1,6 +1,6 @@
 /* TaqwaLife service worker: cache offline + notifikasi push */
-const V = 'taqwalife-v18';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const V = 'taqwalife-v19'; // naikkan angka ini setiap kali file aplikasi diperbarui
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './css/style.css', './js/config.js', './js/core.js', './js/security.js', './js/storage.js', './js/data.js', './js/auth.js', './js/navigation.js', './js/theme.js', './js/views.js', './js/actions.js', './js/notifications.js', './js/prayer-times.js', './js/backup-share.js', './js/family.js', './js/hafalan.js', './js/challenges.js', './js/agenda.js', './js/about.js', './js/kajian.js', './js/doa.js', './js/ibadah-extra.js', './js/account.js', './js/menu.js', './js/push.js', './js/main.js'];
 const HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com', 'cdnjs.cloudflare.com'];
 
 self.addEventListener('install', e => {

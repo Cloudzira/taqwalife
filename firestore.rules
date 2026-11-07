@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Aturan keamanan Firestore untuk TaqwaLife.
+// Pasang di: Firebase Console > Firestore Database > Rules > Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Data pribadi: hanya pemilik akun yang boleh membaca & menulis.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Grup keluarga: dokumen dibuka lewat kode 6 karakter (tanpa daftar/list).
+    match /groups/{code} {
+      allow get: if request.auth != null;
+      allow list: if false;
+
+      allow create: if request.auth != null
+                    && request.resource.data.owner == request.auth.uid
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 60;
+
+      // Anggota hanya boleh mengubah 'members' (barisnya sendiri) dan 'targets'.
+      allow update: if request.auth != null
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'targets'])
+                    && request.resource.data.members.keys().size() <= 30
+                    && request.resource.data.members.diff(resource.data.members).affectedKeys().hasOnly([request.auth.uid]);
+
+      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
+    }
+  }
+}
