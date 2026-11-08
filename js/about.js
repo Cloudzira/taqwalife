@@ -5,8 +5,6 @@
 
 // Versi aplikasi.
 const APP_V = '1.0.0';
-// Tautan dasar WhatsApp.
-const WA = 'https://wa.me/6285870906050';
 // Memuat ikon Font Awesome hanya saat halaman Tentang dibuka.
 function loadFA() {
     if (document.querySelector('#fa'))
@@ -43,16 +41,14 @@ const FAQ = [
 // Halaman Tentang.
 function abtV() {
     loadFA();
-    const msg = encodeURIComponent('Assalamu\'alaikum, saya ingin bertanya tentang TaqwaLife');
     return `<div class="card" style="text-align:center;padding:26px 16px"><svg width="64" height="64"><use href="#fl"/></svg><h2 style="font-size:24px;margin-top:8px">Taqwa<span class="lt">Life</span></h2><small style="color:var(--mut)">Versi ${APP_V}</small><p style="color:var(--mut);font-size:13px;margin-top:10px">Pendamping ibadah harian muslim: susun agenda, catat amalan, pantau target, dan evaluasi diri dengan tenang dan konsisten.</p></div>
   <div class="card"><h3>Panduan penggunaan</h3>${GUIDE.map(g => `<details><summary>${g[0]}</summary>${g[1]}</details>`).join('')}</div>
   <div class="card"><h3>Pertanyaan umum</h3>${FAQ.map(f => `<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</div>
   <div class="card"><h3>Ikuti dan hubungi kami</h3><div class="soc">
    <a href="https://instagram.com/kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i>Instagram</a>
    <a href="https://tiktok.com/@kurniapedia" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i>TikTok</a>
-   <a href="https://kurniapedia.vercel.app/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i>Kurniapedia</a>
-   <a href="${WA}?text=${msg}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i>WhatsApp</a></div>
-  <div class="flex" style="margin-top:14px;flex-wrap:wrap"><button class="btn sm" onclick="shareApp()">Bagikan aplikasi</button><a class="btn sm o" style="text-decoration:none;display:inline-block" href="${WA}?text=${encodeURIComponent('Assalamu\'alaikum, saya ingin memberi saran / melaporkan masalah di TaqwaLife: ')}" target="_blank" rel="noopener noreferrer">Kirim saran atau laporan</a></div></div>`;
+   <a href="https://kurniapedia.my.id/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i>Kurniapedia</a></div>
+  <div class="flex" style="margin-top:14px;flex-wrap:wrap"><button class="btn sm" onclick="shareApp()">Bagikan aplikasi</button></div></div>`;
 }
 // Membagikan tautan aplikasi.
 async function shareApp() {
