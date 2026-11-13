@@ -1,7 +1,7 @@
 # TaqwaLife - Amal Yaumi Harian
 
 Aplikasi web (PWA) untuk merencanakan, mencatat, dan mengevaluasi ibadah harian.
-Tanpa build tool: cukup unggah folder ini ke GitHub lalu deploy di Vercel.
+Tanpa build tool: cukup unggah folder ini ke GitHub lalu deploy di Cloudflare Pages.
 
 ## Struktur folder
 
@@ -14,7 +14,7 @@ taqwalife-main/
 ├── manifest.webmanifest    Pengaturan aplikasi yang bisa dipasang (PWA)
 ├── *.png                   Ikon aplikasi
 ├── firestore.rules         Aturan keamanan database (pasang di Firebase Console)
-└── vercel.json             Header keamanan untuk Vercel
+└── _headers                Header keamanan untuk Cloudflare Pages
 ```
 
 ## Urutan file JavaScript (jangan diubah)
@@ -55,13 +55,13 @@ Yang sudah diterapkan:
 1. **Validasi data** (`js/security.js`): data dari localStorage, cloud, file cadangan, dan dokumen grup dibangun ulang dengan tipe/format ketat. Ini menutup celah XSS lewat id/nama dan prototype pollution lewat file cadangan palsu.
 2. **`esc()`** kini juga mengamankan tanda `'` dan `` ` ``.
 3. **Content Security Policy** di `index.html` membatasi sumber skrip, koneksi, frame, dan object.
-4. **Header keamanan** di `vercel.json` (nosniff, anti-iframe, referrer, HSTS).
+4. **Header keamanan** di `_headers` (nosniff, anti-iframe, referrer, HSTS).
 5. **Batas ukuran/panjang** input dan file cadangan (maks 2 MB).
 
 Yang perlu Anda lakukan sekali (di luar kode):
 
 1. **Pasang `firestore.rules`** di Firebase Console > Firestore > Rules > Publish. Tanpa ini, keamanan database bergantung pada aturan lama Anda.
-2. **Batasi API key** di Google Cloud Console > APIs & Services > Credentials: pilih *HTTP referrers* dan isi domain Vercel Anda. (API key Firebase memang publik, tetapi sebaiknya dibatasi domain.)
+2. **Batasi API key** di Google Cloud Console > APIs & Services > Credentials: pilih *HTTP referrers* dan isi domain Cloudflare Pages Anda (misal nama-proyek.pages.dev). (API key Firebase memang publik, tetapi sebaiknya dibatasi domain.)
 3. Setelah deploy, **uji login Email, login Google, dan notifikasi push**. Bila ada yang gagal karena CSP, hapus sementara baris `<meta http-equiv="Content-Security-Policy" ...>` di `index.html`, lalu beri tahu saya agar dilonggarkan seperlunya.
 
 Catatan jujur: CSP masih memakai `'unsafe-inline'` untuk skrip karena tombol di aplikasi memakai atribut `onclick`. Risiko XSS tetap ditekan oleh `esc()` dan `security.js`. Mengganti `onclick` ke event listener adalah perubahan besar yang bisa dilakukan di tahap berikutnya.

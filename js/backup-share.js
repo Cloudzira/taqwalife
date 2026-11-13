@@ -34,6 +34,7 @@ function exp() {
 // Memulihkan data dari file cadangan JSON (sudah divalidasi).
 function imp(el) {
     const f = el.files[0];
+    el.value = '';
     if (!f)
         return;
     if (f.size > 2 * 1024 * 1024)

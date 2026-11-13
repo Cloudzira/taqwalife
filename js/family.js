@@ -45,7 +45,7 @@ async function famLoad(force) {
         return;
     if (force && Date.now() - gAt < 30000)
         return toast('Baru saja diperbarui');
-    if (!force && gDoc && Date.now() - gAt < 10 * 60000)
+    if (!force && gAt && Date.now() - gAt < 10 * 60000)
         return;
     gBusy = 1;
     try {
@@ -59,6 +59,7 @@ async function famLoad(force) {
             gAt = Date.now();
         }
     } catch (e) {
+        gAt = Date.now();
         toast('Gagal memuat grup');
     }
     gBusy = 0;

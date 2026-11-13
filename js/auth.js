@@ -104,6 +104,10 @@ async function google() {
     try {
         await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     } catch (x) {
+        if (x.code === 'auth/popup-blocked' || x.code === 'auth/operation-not-supported-in-this-environment')
+            return auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()).catch(() => toast('Login Google gagal'));
+        if (x.code === 'auth/cancelled-popup-request')
+            return;
         toast(ERR[x.code] || 'Login Google gagal');
     }
 }

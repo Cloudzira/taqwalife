@@ -112,7 +112,6 @@ const V = {
             haf: hafV,
             cha: chaV,
             doa: doaV,
-            qib: qibV,
             zak: zakV,
             tas: tasV,
             rem: remV,
@@ -157,40 +156,6 @@ function evalV() {
         return `<i title="${key(d)}: ${p}%" style="${p ? `background:var(--gold);opacity:${(.2 + p / 100 * .8).toFixed(2)}` : 'background:var(--bg)'}"></i>`;
     }).join('')}</div></div>
   <div class="card"><h3>Pencapaian</h3><div class="bdg">${BD.map(b => `<div class="${b[2]() ? 'on' : ''}"><span>${b[0]}</span>${b[1]}</div>`).join('')}</div></div>`;
-}
-// Halaman arah kiblat.
-function qibV() {
-    return `<div class="card" style="text-align:center"><h3>Arah Kiblat</h3><div class="comp"><i id="nd" style="transform:rotate(${QB || 0}deg)"></i><b>${QB == null ? 'Belum dihitung' : Math.round(QB) + '° dari utara'}</b></div>
-  <p style="color:var(--mut);font-size:12px">Ketuk tombol, izinkan lokasi dan sensor. Putar HP hingga panah menunjuk ke atas. Jauhkan dari logam dan magnet, lalu cocokkan dengan kompas lain bila ragu.</p><button class="btn sm" style="margin-top:12px" onclick="kiblat()">Hitung arah kiblat</button></div>`;
-}
-// Mengaktifkan sensor kompas perangkat.
-async function startCompass() {
-    try {
-        if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission)
-            await DeviceOrientationEvent.requestPermission();
-    } catch (e) {
-    }
-    if (cmp)
-        return;
-    cmp = true;
-    const f = e => {
-        const h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.alpha != null ? 360 - e.alpha : null), n = $('#nd');
-        if (n && h != null && QB != null)
-            n.style.transform = 'rotate(' + (QB - h) + 'deg)';
-    };
-    addEventListener('deviceorientationabsolute', f, true);
-    addEventListener('deviceorientation', f, true);
-}
-// Menghitung arah kiblat dari lokasi GPS.
-async function kiblat() {
-    await startCompass();
-    if (!navigator.geolocation)
-        return toast('Perangkat tidak mendukung lokasi');
-    navigator.geolocation.getCurrentPosition(p => {
-        const r = Math.PI / 180, la = p.coords.latitude * r, lo = p.coords.longitude * r, ka = 21.4225 * r, ko = 39.8262 * r, dl = ko - lo;
-        QB = (Math.atan2(Math.sin(dl), Math.cos(la) * Math.tan(ka) - Math.sin(la) * Math.cos(dl)) / r + 360) % 360;
-        render();
-    }, () => toast('Izin lokasi diperlukan'));
 }
 // Halaman kalkulator zakat.
 function zakV() {

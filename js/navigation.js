@@ -14,8 +14,8 @@ const ICO = {
 };
 // Daftar tab navigasi: [id, label].
 const TABS = [['home', 'Beranda'], ['ibadah', 'Ibadah'], ['agenda', 'Agenda'], ['target', 'Target'], ['more', 'Lainnya']];
-// tab = tab aktif; cur = tanggal checklist; sub = sub-halaman menu Lainnya; QB = arah kiblat.
-let tab = 'home', cur = new Date(), sub = '', QB = null, cmp = false;
+// tab = tab aktif; cur = tanggal checklist; sub = sub-halaman menu Lainnya.
+let tab = 'home', cur = new Date(), sub = '';
 // Menggambar tombol navigasi bawah.
 function nav() {
     $('#nav').innerHTML = TABS.map(t => `<button onclick="${t[0] === 'more' ? `sub='';` : ''}go('${t[0]}')" class="${tab === t[0] ? 'on' : ''}"><svg viewBox="0 0 24 24">${ICO[t[0]]}</svg>${t[1]}</button>`).join('');

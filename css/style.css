@@ -598,7 +598,7 @@ nav button.on {
 }
 
 /* ==========================================================================
- * GRAFIK, TASBIH, CATATAN, BADGE, KOMPAS
+ * GRAFIK, TASBIH, CATATAN, BADGE
  * ========================================================================== */
 .bars {
   display: flex;
@@ -697,34 +697,6 @@ nav button.on {
   text-align: right;
   direction: rtl;
   color: var(--gold);
-}
-
-.comp {
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  margin: 12px auto;
-  border: 2px solid var(--gold);
-  display: grid;
-  place-items: center;
-  position: relative;
-}
-
-.comp i {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-bottom: 80px solid var(--gold);
-  top: 10px;
-  left: calc(50% - 11px);
-  transform-origin: 50% 85px;
-}
-
-.comp b {
-  font-size: 12px;
-  color: var(--mut);
 }
 
 label.l {

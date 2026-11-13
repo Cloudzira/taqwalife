@@ -16,11 +16,13 @@ const esc = s => String(s).replace(/[&<>"'`]/g, c => ({
 // Mengubah tanggal menjadi teks "YYYY-MM-DD" yang dipakai sebagai kunci data harian.
 const key = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 // Menampilkan pesan singkat di bagian bawah layar.
+let toastT;
 const toast = m => {
     const t = $('#toast');
     t.textContent = m;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2600);
+    clearTimeout(toastT);
+    toastT = setTimeout(() => t.classList.remove('show'), 2600);
 };
 // Struktur data bawaan seorang pengguna (D). Lihat juga README untuk arti tiap field.
 const defaults = () => ({
