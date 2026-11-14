@@ -20,12 +20,23 @@ let inst = null;
 addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     inst = e;
-    if ($('#app').style.display === 'block' && tab === 'acc')
-        render();
+    insBtn();
 });
+addEventListener('appinstalled', () => {
+    inst = null;
+    insBtn();
+    toast('Aplikasi terpasang');
+});
+// Menampilkan tombol Pasang di header selama aplikasi belum dipasang.
+function insBtn() {
+    const b = $('#ins');
+    if (b)
+        b.style.display = (matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 'none' : '';
+}
 // Fungsi awal: pasang tema, jalankan splash, cek status login, pasang timer & service worker.
 function boot() {
     setTheme(TH());
+    insBtn();
     setTimeout(() => {
         splashDone = true;
         route();

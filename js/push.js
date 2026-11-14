@@ -34,9 +34,9 @@ async function togglePush() {
 // Menjalankan dialog pasang aplikasi.
 async function pasang() {
     if (!inst)
-        return;
+        return toast('Buka menu browser lalu pilih Tambahkan ke layar utama (iPhone: Bagikan, lalu Tambah ke Layar Utama)');
     inst.prompt();
     await inst.userChoice;
     inst = null;
-    render();
+    insBtn();
 }

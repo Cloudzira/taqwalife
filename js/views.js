@@ -208,6 +208,5 @@ function accV() {
   ${themeCard()}
   <div class="card"><h3>Sinkronisasi</h3><small style="color:var(--mut)">${syncInfo()}</small><br><button class="btn sm" style="margin-top:10px" onclick="syncNow()">Sinkron sekarang</button></div>
   <div class="card"><h3>Cadangan data</h3><div class="flex"><button class="btn sm" onclick="exp()">Unduh cadangan</button><button class="btn sm o" onclick="$('#imp').click()">Pulihkan</button></div><input type="file" id="imp" accept=".json" hidden onchange="imp(this)"></div>
-  ${matchMedia('(display-mode: standalone)').matches ? '' : `<div class="card"><h3>Pasang aplikasi</h3>${inst ? '<button class="btn sm" onclick="pasang()">Pasang di perangkat</button>' : '<small style="color:var(--mut)">Buka menu browser lalu pilih Tambahkan ke layar utama (iPhone: Bagikan, lalu Tambah ke Layar Utama).</small>'}</div>`}
   <button class="btn" onclick="logout()">Keluar</button>`;
 }
