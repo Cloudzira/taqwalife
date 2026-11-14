@@ -13,10 +13,17 @@ const greet = () => {
     const h = new Date().getHours();
     return h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
 };
-// Tanggal Hijriah (kalender Umm al-Qura) dalam bahasa Indonesia.
+// Nama bulan Hijriah (ditulis sendiri agar sama di semua HP; sebagian HP salah memakai nama bulan Masehi).
+const HMN = ['Muharram', 'Safar', 'Rabiul Awal', 'Rabiul Akhir', 'Jumadil Awal', 'Jumadil Akhir', 'Rajab', 'Syaban', 'Ramadhan', 'Syawal', 'Dzulkaidah', 'Dzulhijjah'];
+// Tanggal Hijriah (kalender Umm al-Qura), contoh: 4 Jumadil Akhir 1448 H.
 const hijri = d => {
     try {
-        return new Intl.DateTimeFormat('id-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+        const p = {};
+        new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(d).forEach(x => p[x.type] = x.value);
+        const m = +p.month, y = parseInt(p.year, 10);
+        if (!(m >= 1 && m <= 12) || !y)
+            return '';
+        return +p.day + ' ' + HMN[m - 1] + ' ' + y + ' H';
     } catch (e) {
         return '';
     }
