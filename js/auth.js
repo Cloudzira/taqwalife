@@ -4,7 +4,7 @@
  * ========================================================================== */
 
 // Penanda: splash screen selesai (splashDone) dan status login diketahui (au).
-let splashDone = false, au;
+let splashDone = false, au, authErr = '';
 // Memutuskan menampilkan halaman login atau aplikasi setelah splash selesai.
 function route() {
     if (!splashDone || au === undefined)
@@ -41,13 +41,28 @@ function boot() {
         splashDone = true;
         route();
     }, 1900);
-    if (CFG)
-        auth.onAuthStateChanged(u => {
+    if (CFG) {
+        // Pastikan sesi login disimpan permanen di perangkat (bukan hanya selama tab terbuka).
+        const startAuth = () => auth.onAuthStateChanged(u => {
             au = u || null;
+            if (u)
+                lss('tl_sess', '1'); // penanda: perangkat ini pernah berhasil login
+            route();
+        }, err => {
+            authErr = (err && err.code) || 'unknown';
+            au = null;
             route();
         });
-    else
-        au = null;
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => {
+            authErr = 'persistence: ' + ((e && e.code) || 'gagal');
+        }).then(startAuth);
+        // Hasil login Google lewat redirect (dipakai bila pop-up diblokir di HP).
+        auth.getRedirectResult().catch(x => {
+            if (x && x.code)
+                toast(ERR[x.code] || 'Login Google gagal');
+        });
+    } else
+        au = lsg('tl_local') && !lsg('tl_sess') ? { uid: 'local', displayName: lsg('tl_local') } : null;
     if ('Notification' in window)
         setInterval(tick, 20000);
     setInterval(() => {
@@ -60,6 +75,29 @@ function boot() {
     if ('serviceWorker' in navigator && location.protocol !== 'file:')
         navigator.serviceWorker.register('sw.js').catch(() => {
         });
+}
+// Mengecek apakah penyimpanan IndexedDB (tempat Firebase menyimpan sesi login) bisa dipakai.
+function idbOk() {
+    return new Promise(res => {
+        try {
+            const r = indexedDB.open('tl_probe');
+            r.onsuccess = () => {
+                r.result.close();
+                res(true);
+            };
+            r.onerror = r.onblocked = () => res(false);
+        } catch (e) {
+            res(false);
+        }
+    });
+}
+// Bila perangkat ini pernah login tetapi sesi hilang, tampilkan alasan yang mungkin.
+async function authNote() {
+    const el = $('#authNote');
+    if (!el || lsg('tl_sess') !== '1')
+        return;
+    const ok = await idbOk();
+    el.innerHTML = '<div class="warn">Sesi login sebelumnya tidak dapat dipulihkan. ' + (ok ? (authErr ? 'Kode: ' + esc(authErr) + '. ' : '') + 'Kemungkinan sesi sudah berakhir atau data situs dihapus oleh browser/pembersih HP.' : 'Penyimpanan browser diblokir (mode privat, browser dalam aplikasi, atau data situs dibersihkan otomatis). Buka lewat Chrome/Safari biasa dan izinkan data situs.') + '</div>';
 }
 // Menampilkan form Masuk / Daftar (m = "in" atau "reg").
 function showAuth(m) {
@@ -78,7 +116,9 @@ function showAuth(m) {
     <button class="btn o" onclick="google()">Lanjut dengan Google</button>
     ${reg ? '' : '<button class="lnk" onclick="forgot()">Lupa kata sandi?</button>'}`;
     }
+    h = '<div id="authNote"></div>' + h;
     $('#authBox').innerHTML = h;
+    authNote();
 }
 // Terjemahan kode error Firebase ke pesan bahasa Indonesia.
 const ERR = {
@@ -137,11 +177,14 @@ async function forgot() {
 // Masuk tanpa login (mode lokal, data hanya di perangkat).
 function startLocal() {
     au = { uid: 'local', displayName: $('#an').value.trim() || 'Sahabat' };
+    lss('tl_local', au.displayName);
     route();
 }
 // Keluar dari akun (data disinkronkan dulu).
 async function logout() {
     await syncCloud(true);
+    lss('tl_sess', '');
+    lss('tl_local', '');
     if (CFG)
         auth.signOut().then(() => location.reload());
     else
